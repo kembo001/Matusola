@@ -1,0 +1,26 @@
+/* BEM naming convention */
+.landing {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.landing__auction,
+.landing__inventory {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+}
+
+.landing__auction {
+  background-color: #1a73e8; /* Blue */
+}
+
+.landing__inventory {
+  background-color: #34a853; /* Green */
+}
