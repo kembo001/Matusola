@@ -54,3 +54,13 @@
 .banner__phone:hover {
   color: #cccccc;
 }
+
+.banner__address::before {
+  content: "📍"; /* Map pin emoji */
+  margin-right: 0.5rem;
+}
+
+.banner__phone::before {
+  content: "📞"; /* Phone emoji */
+  margin-right: 0.5rem;
+}
