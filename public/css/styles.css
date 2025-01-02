@@ -2,7 +2,7 @@
 .landing {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - 120px);
 }
 
 .landing__auction,
@@ -23,4 +23,34 @@
 
 .landing__inventory {
   background-color: #34a853; /* Green */
+}
+
+/* New banner styles */
+.banner {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.banner__title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.banner__address,
+.banner__phone {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.banner__address:hover,
+.banner__phone:hover {
+  color: #cccccc;
 }
