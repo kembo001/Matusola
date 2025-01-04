@@ -20,11 +20,12 @@ function createTables() {
             year INTEGER NOT NULL,
             make TEXT NOT NULL,
             model TEXT NOT NULL,
+            trim TEXT,
             price INTEGER,
             mileage INTEGER,
             vin TEXT,
-            transmission TEXT,
             engine TEXT,
+            transmission TEXT,
             status TEXT DEFAULT 'available',
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
