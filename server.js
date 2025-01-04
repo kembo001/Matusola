@@ -15,7 +15,6 @@ app.get("/", (req, res) => {
 });
 
 app.get("/inventory", (req, res) => {
-  // TODO: Add inventory data
   res.render("inventory");
 });
 
