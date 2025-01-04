@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+const db = require("./database.js"); // This imports and runs database.js
 
 // Set up EJS
 app.set("views", path.join(__dirname, "views"));
