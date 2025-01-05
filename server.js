@@ -16,7 +16,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/inventory", (req, res) => {
-  res.render("inventory");
+  db.all("SELECT * FROM vehicles WHERE status = ?", ["available"], (err, vehicles) => {
+    if (err) {
+      console.error("Error fetching vehicles:", err);
+      return res.status(500).send("Database error");
+    }
+    res.render("inventory", { vehicles });
+  });
 });
 
 // Start server

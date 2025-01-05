@@ -3,10 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Inventory</title>
+    <title>Inventory - Wholesale Cars</title>
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
-    <h1>Inventory</h1>
-    <p>This is the inventory page</p>
+    <div class="banner">
+      <h1 class="banner__title">Wholesale Cars</h1>
+      <a href="https://maps.app.goo.gl/oiKn7Hk6RhoiGgvX9" target="_blank" class="banner__address"> 7820 Riverdale drive NW, Ramsey, MN 55303 </a>
+      <a href="tel:763-242-6155" class="banner__phone"> (763) 242-6155 </a>
+    </div>
+
+    <div class="inventory">
+      <% vehicles.forEach(vehicle => { %>
+      <div class="inventory__card">
+        <h2 class="inventory__title"><%= vehicle.title %></h2>
+        <div class="inventory__details">
+          <p class="inventory__price">$<%= vehicle.price.toLocaleString() %></p>
+          <p class="inventory__mileage"><%= vehicle.mileage.toLocaleString() %> miles</p>
+          <div class="inventory__specs">
+            <p><strong>VIN:</strong> <%= vehicle.vin %></p>
+            <p><strong>Engine:</strong> <%= vehicle.engine %></p>
+            <p><strong>Transmission:</strong> <%= vehicle.transmission %></p>
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
   </body>
 </html>

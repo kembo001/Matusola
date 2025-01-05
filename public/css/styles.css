@@ -1,4 +1,9 @@
-/* BEM naming convention */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .landing {
   display: flex;
   flex-direction: column;
@@ -25,7 +30,6 @@
   background-color: #34a853; /* Green */
 }
 
-/* New banner styles */
 .banner {
   background-color: #1a1a1a;
   color: white;
@@ -63,4 +67,48 @@
 .banner__phone::before {
   content: "📞"; /* Phone emoji */
   margin-right: 0.5rem;
+}
+
+/* Inventory styles */
+.inventory {
+  padding: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.inventory__card {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.inventory__title {
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.inventory__price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #34a853;
+  margin: 0.5rem 0;
+}
+
+.inventory__mileage {
+  color: #666;
+  margin: 0.5rem 0;
+}
+
+.inventory__specs {
+  border-top: 1px solid #eee;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.inventory__specs p {
+  margin: 0.25rem 0;
+  color: #444;
 }
