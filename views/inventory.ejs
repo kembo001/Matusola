@@ -13,6 +13,27 @@
       <a href="tel:763-242-6155" class="banner__phone">📞 (763) 242-6155 </a>
     </div>
 
+    <div class="filters">
+      <div class="filters__group">
+        <select class="filters__select" name="status">
+          <option value="available">Available Vehicles</option>
+          <option value="sold">Sold Vehicles</option>
+          <option value="all">All Vehicles</option>
+        </select>
+      </div>
+
+      <div class="filters__group">
+        <select class="filters__select" name="sort">
+          <option value="newest">Year: Newest First</option>
+          <option value="oldest">Year: Oldest First</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="mileage-high">Mileage: High to Low</option>
+          <option value="mileage-low">Mileage: Low to High</option>
+        </select>
+      </div>
+    </div>
+
     <div class="inventory">
       <% vehicles.forEach(vehicle => { %>
       <div class="inventory__card">
