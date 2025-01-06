@@ -475,3 +475,87 @@ body {
   transition: all 0.3s ease;
   overflow: hidden;
 }
+
+/* Add these admin styles to your existing styles.css */
+
+.admin {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.admin__title {
+  font-size: 1.75rem;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.admin__form {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin__group {
+  margin-bottom: 1.5rem;
+}
+
+.admin__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin__group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.admin__group input,
+.admin__group select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.admin__group input:focus,
+.admin__group select:focus {
+  outline: none;
+  border-color: #999;
+}
+
+.admin__submit {
+  width: 100%;
+  padding: 1rem;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin__submit:hover {
+  background: #444;
+}
+
+/* Style for required field labels */
+.admin__group label::after {
+  content: "*";
+  color: #ff4444;
+  margin-left: 0.25rem;
+}
+
+.admin__group label:not([for="trim"]):not([for="vin"]):not([for="engine"]):not([for="transmission"])::after {
+  content: "*";
+  color: #ff4444;
+  margin-left: 0.25rem;
+}

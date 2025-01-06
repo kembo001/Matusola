@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <title>Admin - Add Vehicle</title>
+  </head>
+  <body>
+    <div class="banner">
+      <h1 class="banner__title">Wholesale Cars</h1>
+      <a href="https://maps.app.goo.gl/oiKn7Hk6RhoiGgvX9" target="_blank" class="banner__address">📍 7820 Riverdale drive NW, Ramsey, MN 55303 </a>
+      <a href="tel:763-242-6155" class="banner__phone">📞 (763) 242-6155 </a>
+    </div>
+
+    <div class="admin">
+      <h1 class="admin__title">Add New Vehicle</h1>
+
+      <form class="admin__form" action="/add-vehicle" method="POST" enctype="multipart/form-data">
+        <div class="admin__group">
+          <label for="title">Vehicle Title*</label>
+          <input type="text" id="title" name="title" required placeholder="2017 Ford Escape SE 4x4" />
+        </div>
+
+        <div class="admin__row">
+          <div class="admin__group">
+            <label for="year">Year*</label>
+            <select id="year" name="year" required>
+              <option value="">Select Year</option>
+              <% for(let y = new Date().getFullYear(); y >= 1990; y--) { %>
+              <option value="<%= y %>"><%= y %></option>
+              <% } %>
+            </select>
+          </div>
+
+          <div class="admin__group">
+            <label for="make">Make*</label>
+            <input type="text" id="make" name="make" required placeholder="Ford, Toyota, Kia" />
+          </div>
+
+          <div class="admin__group">
+            <label for="model">Model*</label>
+            <input type="text" id="model" name="model" required placeholder="Escape, Camry, Forte" />
+          </div>
+        </div>
+
+        <div class="admin__row">
+          <div class="admin__group">
+            <label for="price">Price*</label>
+            <input type="number" id="price" name="price" required min="0" step="1" placeholder="7999,600,11877" />
+          </div>
+
+          <div class="admin__group">
+            <label for="mileage">Mileage*</label>
+            <input type="number" id="mileage" name="mileage" required min="0" step="1" placeholder="102004,75333" />
+          </div>
+        </div>
+
+        <div class="admin__row">
+          <div class="admin__group">
+            <label for="trim">Trim</label>
+            <input type="text" id="trim" name="trim" placeholder="SE,EX-L,LX,Premium" />
+          </div>
+
+          <div class="admin__group">
+            <label for="vin">VIN</label>
+            <input
+              type="text"
+              id="vin"
+              name="vin"
+              placeholder="1FMCU9G95HUC49078"
+              pattern="[A-HJ-NPR-Z0-9]{17}"
+              oninput="this.value = this.value.toUpperCase()"
+              title="Please enter a valid 17-character VIN"
+            />
+          </div>
+        </div>
+
+        <div class="admin__row">
+          <div class="admin__group">
+            <label for="engine">Engine</label>
+            <input type="text" id="engine" name="engine" placeholder="2.0L I4 F DOHC 16V" />
+          </div>
+
+          <div class="admin__group">
+            <label for="transmission">Transmission</label>
+            <select id="transmission" name="transmission">
+              <option value="Automatic">Automatic</option>
+              <option value="Manual">Manual</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin__group">
+          <label for="status">Status*</label>
+          <select id="status" name="status" required>
+            <option value="available">Available</option>
+            <option value="sold">Sold</option>
+          </select>
+        </div>
+
+        <div class="admin__group">
+          <label for="images">Vehicle Images*</label>
+          <input type="file" id="images" name="images" multiple accept="image/*" required />
+        </div>
+
+        <button type="submit" class="admin__submit">Add Vehicle</button>
+      </form>
+    </div>
+
+    <script>
+      // Auto-capitalize VIN
+      document.getElementById("vin").addEventListener("input", function (e) {
+        this.value = this.value.toUpperCase();
+      });
+    </script>
+  </body>
+</html>
