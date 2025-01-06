@@ -44,7 +44,7 @@ body {
 
 /* Welcome section */
 .welcome {
-  padding: 1rem 1.5rem 2rem;
+  padding: 0.75rem 1.25rem 1.5rem;
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
@@ -58,8 +58,8 @@ body {
 }
 
 .welcome__text {
-  font-size: 1.1rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.5;
   color: #444;
 }
 
@@ -153,32 +153,6 @@ body {
   border-color: rgba(255, 255, 255, 0.8);
 }
 
-/* Media queries */
-@media (min-width: 768px) {
-  .banner {
-    padding: 2rem;
-  }
-
-  .banner__title {
-    font-size: 2.5rem;
-  }
-
-  .cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .welcome {
-    padding: 0.75rem 1.25rem 0.1rem;
-  }
-
-  .welcome__text {
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-}
-
 /* Footer styles */
 .footer {
   background: white;
@@ -191,8 +165,16 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.footer__left {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 0.25rem;
 }
 
 .footer__copyright {
@@ -200,22 +182,21 @@ body {
   font-size: 0.9rem;
 }
 
+.footer__email {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.footer__email:hover,
+.footer__admin:hover {
+  color: #ff69b4;
+}
+
 .footer__admin {
   color: #999;
   text-decoration: none;
   font-size: 0.85rem;
   transition: color 0.2s;
-}
-
-.footer__admin:hover {
-  color: #ff69b4;
-}
-
-/* Add this to your existing mobile media query */
-@media (max-width: 480px) {
-  .footer__content {
-    flex-direction: column;
-    gap: 0.5rem;
-    text-align: center;
-  }
 }
