@@ -11,7 +11,7 @@ const db = new sqlite3.Database(path.join(__dirname, "database.db"), (err) => {
   }
 });
 
-// Create tables if they don't exist
+// Create table if they don't exist
 function createTables() {
   db.run(`
         CREATE TABLE IF NOT EXISTS vehicles (
@@ -27,19 +27,8 @@ function createTables() {
             engine TEXT,
             transmission TEXT,
             status TEXT DEFAULT 'available',
+            images_folder TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    `);
-
-  db.run(`
-        CREATE TABLE IF NOT EXISTS vehicle_images (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            vehicle_id INTEGER,
-            image_url TEXT NOT NULL,
-            thumbnail_url TEXT NOT NULL,
-            display_order INTEGER DEFAULT 0,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(vehicle_id) REFERENCES vehicles(id)
         )
     `);
 }

@@ -23,11 +23,11 @@
 }
 
 .landing__auction {
-  background-color: #1a73e8; /* Blue */
+  background-color: #1a73e8;
 }
 
 .landing__inventory {
-  background-color: #34a853; /* Green */
+  background-color: #34a853;
 }
 
 .banner {
@@ -60,12 +60,12 @@
 }
 
 .banner__address::before {
-  content: "📍"; /* Map pin emoji */
+  content: "📍";
   margin-right: 0.5rem;
 }
 
 .banner__phone::before {
-  content: "📞"; /* Phone emoji */
+  content: "📞";
   margin-right: 0.5rem;
 }
 
@@ -78,37 +78,117 @@
 
 .inventory__card {
   background: white;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.inventory__image {
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+.inventory__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.inventory__content {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.inventory__info {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .inventory__title {
-  font-size: 1.2rem;
-  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: bold;
   color: #333;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+  word-wrap: break-word;
+}
+
+.inventory__mileage,
+.inventory__vin {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.inventory__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  min-width: max-content;
 }
 
 .inventory__price {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #34a853;
-  margin: 0.5rem 0;
+  color: #333;
+  margin: 0;
+  white-space: nowrap;
 }
 
-.inventory__mileage {
-  color: #666;
-  margin: 0.5rem 0;
+.inventory__button {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  background: #ff69b4;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(255, 105, 180, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.inventory__specs {
-  border-top: 1px solid #eee;
+.inventory__button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 105, 180, 0.3);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
   margin-top: 1rem;
-  padding-top: 1rem;
 }
 
-.inventory__specs p {
-  margin: 0.25rem 0;
-  color: #444;
+.pagination__button {
+  padding: 0.5rem 1rem;
+  background: #ff69b4;
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(255, 105, 180, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pagination__button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 105, 180, 0.3);
+}
+
+.pagination__info {
+  color: #666;
+  font-size: 0.9rem;
 }
