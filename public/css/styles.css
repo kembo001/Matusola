@@ -20,6 +20,7 @@ body {
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
+  gap: 0.15rem;
 }
 
 .banner__title {
