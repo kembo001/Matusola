@@ -15,21 +15,20 @@
 
     <div class="filters">
       <div class="filters__group">
-        <select class="filters__select" name="status">
-          <option value="available">Available Vehicles</option>
-          <option value="sold">Sold Vehicles</option>
-          <option value="all">All Vehicles</option>
+        <select class="filters__select" name="status" onchange="updateFilters(this)">
+          <option value="available" <%= currentStatus === 'available' ? 'selected' : '' %>>Available Vehicles</option>
+          <option value="sold" <%= currentStatus === 'sold' ? 'selected' : '' %>>Sold Vehicles</option>
+          <option value="all" <%= currentStatus === 'all' ? 'selected' : '' %>>All Vehicles</option>
         </select>
       </div>
 
       <div class="filters__group">
-        <select class="filters__select" name="sort">
-          <option value="newest">Year: Newest First</option>
-          <option value="oldest">Year: Oldest First</option>
-          <option value="price-high">Price: High to Low</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="mileage-high">Mileage: High to Low</option>
-          <option value="mileage-low">Mileage: Low to High</option>
+        <select class="filters__select" name="sort" onchange="updateFilters(this)">
+          <option value="newest" <%= currentSort === 'newest' ? 'selected' : '' %>>Newest First</option>
+          <option value="price-high" <%= currentSort === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
+          <option value="price-low" <%= currentSort === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
+          <option value="mileage-low" <%= currentSort === 'mileage-low' ? 'selected' : '' %>>Mileage: Low to High</option>
+          <option value="mileage-high" <%= currentSort === 'mileage-high' ? 'selected' : '' %>>Mileage: High to Low</option>
         </select>
       </div>
     </div>
@@ -61,14 +60,22 @@
 
     <div class="pagination">
       <% if (hasPrevPage) { %>
-      <a href="/inventory?page=<%= currentPage - 1 %>" class="pagination__button">Previous</a>
+      <a href="/inventory?page=<%= currentPage - 1 %>&status=<%= currentStatus %>&sort=<%= currentSort %>" class="pagination__button">Previous</a>
       <% } %>
 
       <span class="pagination__info">Page <%= currentPage %> of <%= totalPages %></span>
 
       <% if (hasNextPage) { %>
-      <a href="/inventory?page=<%= currentPage + 1 %>" class="pagination__button">Next</a>
+      <a href="/inventory?page=<%= currentPage + 1 %>&status=<%= currentStatus %>&sort=<%= currentSort %>" class="pagination__button">Next</a>
       <% } %>
     </div>
+
+    <script>
+    function updateFilters(select) {
+      const status = document.querySelector('select[name="status"]').value;
+      const sort = document.querySelector('select[name="sort"]').value;
+      window.location.href = `/inventory?status=${status}&sort=${sort}`;
+    }
+    </script>
   </body>
 </html>

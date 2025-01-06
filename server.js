@@ -17,23 +17,54 @@ app.get("/", (req, res) => {
 });
 
 app.get("/inventory", (req, res) => {
-  const page = parseInt(req.query.page) || 1; // Get page from query or default to 1
-  const limit = 3; // X vehicles per page
+  const page = parseInt(req.query.page) || 1;
+  const limit = 3;
   const offset = (page - 1) * limit;
 
-  // First get total count of available vehicles
-  db.get(`SELECT COUNT(*) as total FROM vehicles WHERE status = ?`, ["available"], (err, count) => {
+  // Set default values for filters
+  const currentStatus = req.query.status || "available";
+  const currentSort = req.query.sort || "newest";
+
+  // Build WHERE clause
+  let whereClause = currentStatus === "all" ? "1=1" : "status = ?";
+  let params = currentStatus === "all" ? [] : [currentStatus];
+
+  // Build ORDER BY clause based on sort parameter
+  let orderBy;
+  switch (currentSort) {
+    case "newest":
+      orderBy = "year DESC";
+      break;
+    case "price-high":
+      orderBy = "price DESC";
+      break;
+    case "price-low":
+      orderBy = "price ASC";
+      break;
+    case "mileage-low":
+      orderBy = "mileage ASC";
+      break;
+    case "mileage-high":
+      orderBy = "mileage DESC";
+      break;
+    default:
+      orderBy = "year DESC";
+  }
+
+  // Get filtered count
+  db.get(`SELECT COUNT(*) as total FROM vehicles WHERE ${whereClause}`, params, (err, count) => {
     if (err) {
       console.error("Error counting vehicles:", err);
       return res.status(500).send("Database error");
     }
 
-    // Then get paginated vehicles
+    // Get filtered and sorted vehicles
     db.all(
       `SELECT * FROM vehicles 
-         WHERE status = ?
+         WHERE ${whereClause}
+         ORDER BY ${orderBy}
          LIMIT ? OFFSET ?`,
-      ["available", limit, offset],
+      [...params, limit, offset],
       (err, vehicles) => {
         if (err) {
           console.error("Error fetching vehicles:", err);
@@ -54,6 +85,8 @@ app.get("/inventory", (req, res) => {
           totalPages,
           hasNextPage: page < totalPages,
           hasPrevPage: page > 1,
+          currentStatus, // Pass the status to the view
+          currentSort, // Pass the sort to the view
         });
       }
     );
