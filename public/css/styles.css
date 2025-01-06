@@ -200,3 +200,143 @@ body {
   font-size: 0.85rem;
   transition: color 0.2s;
 }
+
+/* Inventory styles */
+.inventory {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.inventory__card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.inventory__card:hover {
+  transform: translateY(-2px);
+}
+
+.inventory__image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
+.inventory__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.inventory__content {
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.inventory__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  max-width: 70%;
+}
+
+.inventory__title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.inventory__mileage {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.inventory__vin {
+  font-size: 0.85rem;
+  color: #999;
+  font-family: monospace;
+}
+
+.inventory__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.inventory__price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.inventory__button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.inventory__button:hover {
+  background: #444;
+}
+
+/* Search section */
+.inventory__search {
+  padding: 1rem;
+  text-align: center;
+}
+
+.inventory__search-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.pagination__button {
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.pagination__button:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.pagination__info {
+  color: #666;
+  font-size: 0.9rem;
+}
