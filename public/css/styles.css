@@ -170,7 +170,7 @@ body {
 
 @media (max-width: 480px) {
   .welcome {
-    padding: 0.75rem 1.25rem 1.5rem;
+    padding: 0.75rem 1.25rem 0.1rem;
   }
 
   .welcome__text {
