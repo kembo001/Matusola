@@ -178,3 +178,44 @@ body {
     line-height: 1.5;
   }
 }
+
+/* Footer styles */
+.footer {
+  background: white;
+  padding: 1rem 1.5rem;
+  margin-top: 2rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.footer__content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer__copyright {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.footer__admin {
+  color: #999;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+
+.footer__admin:hover {
+  color: #ff69b4;
+}
+
+/* Add this to your existing mobile media query */
+@media (max-width: 480px) {
+  .footer__content {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}
