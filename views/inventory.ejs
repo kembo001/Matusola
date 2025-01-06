@@ -36,11 +36,14 @@
     <div class="inventory">
       <% vehicles.forEach(vehicle => { %>
       <div class="inventory__card">
-        <% if (vehicle.image_url) { %>
         <div class="inventory__image">
-          <img src="<%= vehicle.image_url %>" alt="<%= vehicle.title %>" loading="lazy" />
+          <div class="inventory__gallery-container">
+            <img src="<%= vehicle.image_url %>" alt="<%= vehicle.title %>" loading="lazy" />
+          </div>
+          <button class="inventory__gallery-prev" style="display: none;">←</button>
+          <button class="inventory__gallery-next" style="display: none;">→</button>
+          <div class="inventory__gallery-loading" style="display: none;">Loading images...</div>
         </div>
-        <% } %>
 
         <div class="inventory__content">
           <div class="inventory__info">
@@ -51,7 +54,26 @@
 
           <div class="inventory__actions">
             <p class="inventory__price">$<%= vehicle.price.toLocaleString() %></p>
-            <button class="inventory__button">See More</button>
+            <button 
+              class="inventory__button" 
+              onclick="toggleDetails(this)" 
+              data-vehicle-id="<%= vehicle.id %>"
+              data-images-folder="<%= vehicle.images_folder %>">
+              See More
+            </button>
+          </div>
+        </div>
+
+        <div class="inventory__expand">
+          <div class="inventory__details">
+            <div class="inventory__specs">
+              <p class="inventory__spec"><strong>Year:</strong> <%= vehicle.year %></p>
+              <p class="inventory__spec"><strong>Make:</strong> <%= vehicle.make %></p>
+              <p class="inventory__spec"><strong>Model:</strong> <%= vehicle.model %></p>
+              <p class="inventory__spec"><strong>Trim:</strong> <%= vehicle.trim %></p>
+              <p class="inventory__spec"><strong>Engine:</strong> <%= vehicle.engine %></p>
+              <p class="inventory__spec"><strong>Transmission:</strong> <%= vehicle.transmission %></p>
+            </div>
           </div>
         </div>
       </div>
@@ -75,6 +97,72 @@
       const status = document.querySelector('select[name="status"]').value;
       const sort = document.querySelector('select[name="sort"]').value;
       window.location.href = `/inventory?status=${status}&sort=${sort}`;
+    }
+
+    function toggleDetails(button) {
+      const card = button.closest('.inventory__card');
+      const expandSection = card.querySelector('.inventory__expand');
+      const isExpanding = !expandSection.classList.contains('active');
+      
+      expandSection.classList.toggle('active');
+      button.textContent = isExpanding ? 'See Less' : 'See More';
+      
+      if (isExpanding && !button.dataset.imagesLoaded) {
+        const imagesFolder = button.dataset.imagesFolder;
+        loadVehicleImages(card, imagesFolder);
+        button.dataset.imagesLoaded = 'true';
+      }
+    }
+
+    function loadVehicleImages(card, imagesFolder) {
+      const galleryContainer = card.querySelector('.inventory__gallery-container');
+      const loadingEl = card.querySelector('.inventory__gallery-loading');
+      const prevBtn = card.querySelector('.inventory__gallery-prev');
+      const nextBtn = card.querySelector('.inventory__gallery-next');
+      
+      loadingEl.style.display = 'block';
+      
+      const images = [galleryContainer.querySelector('img')];
+      
+      for(let i = 1; i <= 50; i++) {
+        const img = new Image();
+        img.src = `https://wholesalecars.sfo3.cdn.digitaloceanspaces.com/${imagesFolder}/${i}.jpg`;
+        img.style.display = 'none';
+        
+        img.onload = () => {
+          images.push(img);
+          galleryContainer.appendChild(img);
+          if (i === 1) {
+            loadingEl.style.display = 'none';
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+            setupNavigation(card, images);
+          }
+        };
+        
+        img.onerror = () => {
+          if (i === 1) loadingEl.style.display = 'none';
+          return;
+        };
+      }
+    }
+
+    function setupNavigation(card, images) {
+      let currentIndex = 0;
+      const prevBtn = card.querySelector('.inventory__gallery-prev');
+      const nextBtn = card.querySelector('.inventory__gallery-next');
+      
+      prevBtn.onclick = () => {
+        images[currentIndex].style.display = 'none';
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        images[currentIndex].style.display = 'block';
+      };
+      
+      nextBtn.onclick = () => {
+        images[currentIndex].style.display = 'none';
+        currentIndex = (currentIndex + 1) % images.length;
+        images[currentIndex].style.display = 'block';
+      };
     }
     </script>
   </body>
