@@ -24,17 +24,5 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# IDE/Editor
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Build/Deploy
-dist/
-build/
-.vercel/
-.netlify/
-
 # Testing
 coverage/
