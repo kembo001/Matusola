@@ -223,3 +223,13 @@ body {
     line-height: 1.5;
   }
 }
+
+.welcome__highlight {
+  border-bottom: 2px solid rgba(0, 0, 0, 0.25);
+  padding-bottom: 2px;
+  transition: border-color 0.2s;
+}
+
+.welcome__highlight:hover {
+  border-color: rgba(255, 105, 180, 0.8);
+}
