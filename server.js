@@ -25,6 +25,11 @@ app.get("/", (req, res) => {
 
 // AUTH FUNCTION FOR ADMIN ROUTE
 function basicAuth(req, res, next) {
+  // Add no-cache headers
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
   const auth = req.headers.authorization;
 
   if (!auth || !auth.startsWith("Basic ")) {
@@ -47,6 +52,11 @@ function basicAuth(req, res, next) {
 
 // Use it on admin routes
 app.get("/admin", basicAuth, async (req, res) => {
+  // Add no-cache headers here too for extra security
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
   try {
     // Get all vehicles from database using Promise
     const vehicles = await new Promise((resolve, reject) => {
