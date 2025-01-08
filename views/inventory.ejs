@@ -42,7 +42,13 @@
           </div>
           <button class="inventory__gallery-prev" style="display: none;">←</button>
           <button class="inventory__gallery-next" style="display: none;">→</button>
-          <div class="inventory__gallery-loading" style="display: none;">Loading images...</div>
+          <div class="inventory__gallery-loading" style="display: none;">
+            <div class="inventory__loading-spinner"></div>
+            <div>Loading images...</div>
+          </div>
+          <div class="inventory__counter" style="display: none;">
+            <span id="currentImage">1</span>/<span id="totalImages">1</span>
+          </div>
         </div>
 
         <div class="inventory__content">
@@ -92,6 +98,21 @@
       <% } %>
     </div>
 
+    <style>
+    .inventory__counter {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      z-index: 2;
+    }
+    </style>
+
     <script>
     function updateFilters(select) {
       const status = document.querySelector('select[name="status"]').value;
@@ -119,51 +140,91 @@
       const loadingEl = card.querySelector('.inventory__gallery-loading');
       const prevBtn = card.querySelector('.inventory__gallery-prev');
       const nextBtn = card.querySelector('.inventory__gallery-next');
+      const counter = card.querySelector('.inventory__counter');
+      const currentImageEl = counter.querySelector('#currentImage');
+      const totalImagesEl = counter.querySelector('#totalImages');
       
       loadingEl.style.display = 'block';
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+      counter.style.display = 'none';
       
-      const images = [galleryContainer.querySelector('img')];
+      // Create array to store all images
+      const images = [];
+      let loadedCount = 0;
       
-      for(let i = 1; i <= 50; i++) {
+      // Add the first image that's already loaded
+      const firstImage = galleryContainer.querySelector('img');
+      images.push(firstImage);
+      
+      // Function to load additional images
+      const loadImage = (index) => {
         const img = new Image();
-        img.src = `https://wholesalecars.sfo3.cdn.digitaloceanspaces.com/${imagesFolder}/${i}.jpg`;
-        img.style.display = 'none';
+        img.src = `https://wholesalecars.sfo3.cdn.digitaloceanspaces.com/${imagesFolder}/${index}.jpg`;
         
         img.onload = () => {
+          loadedCount++;
           images.push(img);
+          img.style.display = 'none';
           galleryContainer.appendChild(img);
-          if (i === 1) {
+          
+          // Try loading next image
+          loadImage(index + 1);
+          
+          // If we have at least 2 images, show navigation and counter
+          if (images.length >= 2) {
             loadingEl.style.display = 'none';
             prevBtn.style.display = 'block';
             nextBtn.style.display = 'block';
+            counter.style.display = 'block';
+            totalImagesEl.textContent = images.length;
             setupNavigation(card, images);
           }
         };
         
         img.onerror = () => {
-          if (i === 1) loadingEl.style.display = 'none';
-          return;
+          if (images.length > 0) {
+            loadingEl.style.display = 'none';
+            if (images.length > 1) {
+              prevBtn.style.display = 'block';
+              nextBtn.style.display = 'block';
+              counter.style.display = 'block';
+              totalImagesEl.textContent = images.length;
+            }
+            setupNavigation(card, images);
+          }
         };
-      }
+      };
+      
+      // Start loading from image 2 (since 1 is already loaded)
+      loadImage(2);
     }
 
     function setupNavigation(card, images) {
       let currentIndex = 0;
       const prevBtn = card.querySelector('.inventory__gallery-prev');
       const nextBtn = card.querySelector('.inventory__gallery-next');
+      const currentImageEl = card.querySelector('#currentImage');
+      
+      // Make sure first image is visible and counter is set
+      images[0].style.display = 'block';
+      currentImageEl.textContent = '1';
       
       prevBtn.onclick = () => {
         images[currentIndex].style.display = 'none';
         currentIndex = (currentIndex - 1 + images.length) % images.length;
         images[currentIndex].style.display = 'block';
+        currentImageEl.textContent = currentIndex + 1;
       };
       
       nextBtn.onclick = () => {
         images[currentIndex].style.display = 'none';
         currentIndex = (currentIndex + 1) % images.length;
         images[currentIndex].style.display = 'block';
+        currentImageEl.textContent = currentIndex + 1;
       };
     }
     </script>
+
   </body>
 </html>
