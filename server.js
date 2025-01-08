@@ -283,6 +283,40 @@ app.post("/delete-vehicle/:id", async (req, res) => {
   }
 });
 
+// Add toggle status route
+app.post("/toggle-status/:id", async (req, res) => {
+  try {
+    // First get current status
+    const vehicle = await new Promise((resolve, reject) => {
+      db.get("SELECT status FROM vehicles WHERE id = ?", [req.params.id], (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
+    });
+
+    if (!vehicle) {
+      throw new Error("Vehicle not found");
+    }
+
+    // Toggle the status
+    const newStatus = vehicle.status === "available" ? "sold" : "available";
+
+    // Update the database
+    await new Promise((resolve, reject) => {
+      db.run("UPDATE vehicles SET status = ? WHERE id = ?", [newStatus, req.params.id], (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
+    console.log(`Vehicle ${req.params.id} status changed to ${newStatus}`);
+    res.redirect("/admin?status_updated=true");
+  } catch (error) {
+    console.error("Status update error:", error);
+    res.redirect("/admin?error=status_update_failed");
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
