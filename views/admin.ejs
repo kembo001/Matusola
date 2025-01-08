@@ -118,6 +118,25 @@
       </div>
     </div>
 
+    <div class="admin__vehicles">
+      <h2 class="admin__subtitle">Manage Vehicles</h2>
+
+      <div class="admin__vehicle-list">
+        <% vehicles.forEach(vehicle => { %>
+        <div class="admin__vehicle-item">
+          <img src="https://wholesalecars.sfo3.cdn.digitaloceanspaces.com/<%= vehicle.images_folder %>/1.jpg" alt="<%= vehicle.title %>" class="admin__vehicle-thumb" />
+          <div class="admin__vehicle-info">
+            <h3><%= vehicle.title %></h3>
+            <p>$<%= vehicle.price %> - <%= vehicle.status %></p>
+          </div>
+          <form action="/delete-vehicle/<%= vehicle.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this vehicle?');">
+            <button type="submit" class="admin__delete-btn">Delete</button>
+          </form>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+
     <script>
       // Auto-capitalize VIN
       document.getElementById("vin").addEventListener("input", function (e) {

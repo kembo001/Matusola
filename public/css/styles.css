@@ -661,3 +661,51 @@ body {
   color: #333;
   font-size: 1rem;
 }
+
+.admin__vehicles {
+  margin-top: 3rem;
+}
+
+.admin__subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.admin__vehicle-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin__vehicle-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin__vehicle-thumb {
+  width: 100px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 1rem;
+}
+
+.admin__vehicle-info {
+  flex: 1;
+}
+
+.admin__delete-btn {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.admin__delete-btn:hover {
+  background: #ff0000;
+}

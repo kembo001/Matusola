@@ -46,8 +46,32 @@ function basicAuth(req, res, next) {
 }
 
 // Use it on admin routes
-app.get("/admin", basicAuth, (req, res) => {
-  res.render("admin");
+app.get("/admin", async (req, res) => {
+  try {
+    // Get all vehicles from database using Promise
+    const vehicles = await new Promise((resolve, reject) => {
+      db.all(
+        `
+        SELECT * FROM vehicles 
+        ORDER BY created_at DESC
+      `,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
+      );
+    });
+
+    // Render admin page with vehicles data
+    res.render("admin", {
+      vehicles: vehicles,
+    });
+  } catch (error) {
+    console.error("Error fetching vehicles:", error);
+    res.render("admin", {
+      vehicles: [],
+    });
+  }
 });
 
 // END OF AUTH FUNCTION AND ADMIN ROUTE
@@ -202,6 +226,60 @@ app.post("/add-vehicle", upload.array("images"), async (req, res) => {
   } catch (error) {
     console.error("Error adding vehicle:", error);
     res.redirect("/admin?error=true");
+  }
+});
+
+// Add delete route
+app.post("/delete-vehicle/:id", async (req, res) => {
+  try {
+    // 1. Get vehicle info for DO Spaces folder name
+    const vehicle = await new Promise((resolve, reject) => {
+      db.get("SELECT images_folder FROM vehicles WHERE id = ?", [req.params.id], (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
+    });
+
+    if (!vehicle) {
+      console.log("Vehicle not found in database");
+      throw new Error("Vehicle not found");
+    }
+
+    // 2. Delete images from DO Spaces
+    const listParams = {
+      Bucket: "wholesalecars",
+      Prefix: vehicle.images_folder + "/",
+    };
+
+    // List and delete objects
+    const listedObjects = await s3.listObjectsV2(listParams).promise();
+
+    if (listedObjects.Contents.length > 0) {
+      console.log(`Deleting ${listedObjects.Contents.length} files from ${vehicle.images_folder}`);
+
+      await s3
+        .deleteObjects({
+          Bucket: "wholesalecars",
+          Delete: {
+            Objects: listedObjects.Contents.map(({ Key }) => ({ Key })),
+          },
+        })
+        .promise();
+    }
+
+    // 3. Delete from database
+    await new Promise((resolve, reject) => {
+      db.run("DELETE FROM vehicles WHERE id = ?", [req.params.id], (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
+    console.log(`Vehicle ${vehicle.images_folder} deleted successfully`);
+    res.redirect("/admin?deleted=true");
+  } catch (error) {
+    console.error("Delete error:", error);
+    res.redirect("/admin?error=delete_failed");
   }
 });
 
