@@ -111,6 +111,13 @@
       </form>
     </div>
 
+    <div id="loadingOverlay" class="loading-overlay" style="display: none">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Uploading vehicle and images...</div>
+      </div>
+    </div>
+
     <script>
       // Auto-capitalize VIN
       document.getElementById("vin").addEventListener("input", function (e) {
@@ -196,6 +203,9 @@
         form.addEventListener("submit", function (e) {
           e.preventDefault();
 
+          // Show loading overlay
+          loadingOverlay.style.display = "flex";
+
           // Create a new FormData object
           const formData = new FormData(form);
 
@@ -221,6 +231,7 @@
             })
             .catch((error) => {
               console.error("Error:", error);
+              loadingOverlay.style.display = "none"; // Hide on error
               window.location.href = "/admin?error=true";
             });
         });
