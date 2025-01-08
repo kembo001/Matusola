@@ -16,7 +16,7 @@
     <div class="admin">
       <h1 class="admin__title">Add New Vehicle</h1>
 
-      <form class="admin__form" action="/add-vehicle" method="POST" enctype="multipart/form-data">
+      <form class="admin__form" action="/add-vehicle" method="POST" enctype="multipart/form-data" id="vehicleForm">
         <div class="admin__group">
           <label for="title">Vehicle Title*</label>
           <input type="text" id="title" name="title" required placeholder="2017 Ford Escape SE 4x4" />
@@ -101,7 +101,10 @@
 
         <div class="admin__group">
           <label for="images">Vehicle Images*</label>
-          <input type="file" id="images" name="images" multiple accept="image/*" required />
+          <input type="file" id="images" name="images" multiple accept="image/*" required style="margin-bottom: 1rem" />
+          <div id="imagePreview" class="admin__preview">
+            <!-- Images will be displayed here -->
+          </div>
         </div>
 
         <button type="submit" class="admin__submit">Add Vehicle</button>
@@ -112,6 +115,126 @@
       // Auto-capitalize VIN
       document.getElementById("vin").addEventListener("input", function (e) {
         this.value = this.value.toUpperCase();
+      });
+
+      // Add this JavaScript to handle preview and ordering
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("vehicleForm");
+        const imageInput = document.getElementById("images");
+        const previewContainer = document.getElementById("imagePreview");
+        let files = []; // Store FileList as array for reordering
+
+        imageInput.addEventListener("change", function (e) {
+          files = Array.from(e.target.files);
+          updatePreview();
+        });
+
+        function updatePreview() {
+          previewContainer.innerHTML = "";
+
+          files.forEach((file, index) => {
+            const reader = new FileReader();
+            const preview = document.createElement("div");
+            preview.className = "admin__preview-item";
+            preview.draggable = true;
+
+            reader.onload = function (e) {
+              preview.innerHTML = `
+                <img src="${e.target.result}" alt="Preview">
+                <div class="admin__preview-info">
+                  <span>Image ${index + 1}</span>
+                  <button type="button" onclick="removeImage(${index})" class="admin__preview-remove">×</button>
+                </div>
+              `;
+            };
+
+            // Drag and drop handlers
+            preview.addEventListener("dragstart", handleDragStart);
+            preview.addEventListener("dragover", handleDragOver);
+            preview.addEventListener("drop", handleDrop);
+            preview.addEventListener("dragend", handleDragEnd);
+
+            reader.readAsDataURL(file);
+            previewContainer.appendChild(preview);
+          });
+        }
+
+        // Drag and drop functionality
+        let draggedItem = null;
+
+        function handleDragStart(e) {
+          draggedItem = this;
+          this.classList.add("dragging");
+        }
+
+        function handleDragOver(e) {
+          e.preventDefault();
+        }
+
+        function handleDrop(e) {
+          e.preventDefault();
+          if (this === draggedItem) return;
+
+          // Get positions
+          const allItems = [...previewContainer.querySelectorAll(".admin__preview-item")];
+          const draggedIdx = allItems.indexOf(draggedItem);
+          const droppedIdx = allItems.indexOf(this);
+
+          // Reorder files array
+          const tempFile = files[draggedIdx];
+          files.splice(draggedIdx, 1);
+          files.splice(droppedIdx, 0, tempFile);
+
+          updatePreview();
+        }
+
+        function handleDragEnd(e) {
+          this.classList.remove("dragging");
+        }
+
+        // Modify form submission
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Create a new FormData object
+          const formData = new FormData(form);
+
+          // Remove the original files
+          formData.delete("images");
+
+          // Add only the files we want to keep
+          files.forEach((file, index) => {
+            formData.append("images", file);
+          });
+
+          // Submit the form with our modified files
+          fetch("/add-vehicle", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => {
+              if (response.ok) {
+                window.location.href = "/admin?success=true";
+              } else {
+                throw new Error("Upload failed");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              window.location.href = "/admin?error=true";
+            });
+        });
+
+        // Update removeImage function
+        window.removeImage = function (index) {
+          files.splice(index, 1);
+          updatePreview();
+
+          // If no files left, clear the input
+          if (files.length === 0) {
+            imageInput.value = "";
+          }
+        };
       });
     </script>
   </body>
