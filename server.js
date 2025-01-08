@@ -46,7 +46,7 @@ function basicAuth(req, res, next) {
 }
 
 // Use it on admin routes
-app.get("/admin", async (req, res) => {
+app.get("/admin", basicAuth, async (req, res) => {
   try {
     // Get all vehicles from database using Promise
     const vehicles = await new Promise((resolve, reject) => {
