@@ -170,7 +170,7 @@ app.post("/add-vehicle", upload.array("images"), async (req, res) => {
     console.log("Files received:", req.files);
 
     // Get form data with default values
-    const { title, year, make, model, price, mileage, trim, vin, engine, transmission, status = "available" } = req.body;
+    const { title, year, make, model, price, mileage, trim, vin, engine, transmission, drivetrain, title_status, status = "available" } = req.body;
 
     // Validate required fields
     if (!title || !year || !make || !model) {
@@ -225,10 +225,10 @@ app.post("/add-vehicle", upload.array("images"), async (req, res) => {
       INSERT INTO vehicles (
         title, year, make, model, trim,
         price, mileage, vin, engine, transmission,
-        status, images_folder
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        drivetrain, title_status, status, images_folder
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
-      [title, year, make, model, trim, price, mileage, vin, engine, transmission, status, images_folder]
+      [title, year, make, model, trim, price, mileage, vin, engine, transmission, drivetrain, title_status, status, images_folder]
     );
 
     console.log("Insert successful:", result);

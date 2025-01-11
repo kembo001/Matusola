@@ -94,6 +94,31 @@
           </div>
         </div>
 
+        <div class="admin__row">
+          <div class="admin__group">
+            <label for="drivetrain">Drivetrain</label>
+            <select id="drivetrain" name="drivetrain">
+              <option value="Not Specified">Not Specified</option>
+              <option value="2WD">2WD</option>
+              <option value="4WD">4WD</option>
+              <option value="AWD">AWD</option>
+              <option value="FWD">FWD</option>
+              <option value="RWD">RWD</option>
+            </select>
+          </div>
+
+          <div class="admin__group">
+            <label for="title_status">Title Status</label>
+            <select id="title_status" name="title_status" required>
+              <option value="Clean">Clean</option>
+              <option value="Salvage">Salvage</option>
+              <option value="Prior Salvage">Prior Salvage</option>
+              <option value="Junk">Junk</option>
+              <option value="Rebuilt">Rebuilt</option>
+            </select>
+          </div>
+        </div>
+
         <div class="admin__group">
           <label for="status">Status*</label>
           <select id="status" name="status" required>

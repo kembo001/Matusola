@@ -85,6 +85,12 @@
               <p class="inventory__spec"><strong>Trim:</strong> <%= vehicle.trim %></p>
               <p class="inventory__spec"><strong>Engine:</strong> <%= vehicle.engine %></p>
               <p class="inventory__spec"><strong>Transmission:</strong> <%= vehicle.transmission %></p>
+              <p class="inventory__spec"><strong>Drivetrain:</strong> <%= vehicle.drivetrain %></p>
+              <p class="inventory__spec"><strong>Title Status:</strong> 
+                <span class="inventory__title-status inventory__title-status--<%= vehicle.title_status.toLowerCase().replace(' ', '-') %>">
+                  <%= vehicle.title_status %>
+                </span>
+              </p>
             </div>
           </div>
         </div>
@@ -257,6 +263,39 @@
 
     .inventory__card:has(.inventory__sold-overlay) .inventory__gallery-container::after {
       display: block;
+    }
+
+    /* Add styles for title status */
+    .inventory__title-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .inventory__title-status--clean {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .inventory__title-status--salvage {
+      background: #f44336;
+      color: white;
+    }
+
+    .inventory__title-status--prior-salvage {
+      background: #ff9800;
+      color: white;
+    }
+
+    .inventory__title-status--junk {
+      background: #9e9e9e;
+      color: white;
+    }
+
+    .inventory__title-status--rebuilt {
+      background: #2196F3;
+      color: white;
     }
     </style>
 

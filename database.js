@@ -26,6 +26,8 @@ function createTables() {
             vin TEXT,
             engine TEXT,
             transmission TEXT,
+            drivetrain TEXT DEFAULT 'Not Specified',
+            title_status TEXT DEFAULT 'Clean',
             status TEXT DEFAULT 'available',
             images_folder TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
