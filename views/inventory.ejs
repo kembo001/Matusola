@@ -100,22 +100,7 @@
       <a href="/inventory?page=<%= currentPage + 1 %>&status=<%= currentStatus %>&sort=<%= currentSort %>" class="pagination__button">Next</a>
       <% } %>
     </div>
-
-    <style>
-    .inventory__counter {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      z-index: 2;
-    }
-    </style>
-
+    
     <script>
     function updateFilters(select) {
       const status = document.querySelector('select[name="status"]').value;
