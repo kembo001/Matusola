@@ -959,17 +959,17 @@ body {
   .inventory {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
-    grid-auto-rows: min-content; 
-    align-items: start; 
+    grid-auto-rows: min-content;
+    align-items: start;
   }
 
   .inventory__card {
     break-inside: avoid;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
   }
 
   .inventory__expand {
-    grid-column: 1 / -1;å
+    grid-column: 1 / -1;
   }
 
   .filters {
