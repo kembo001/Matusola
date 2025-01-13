@@ -957,19 +957,19 @@ body {
   }
 
   .inventory {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
-    grid-auto-rows: min-content; /* This makes rows only as tall as needed */
-    align-items: start; /* Aligns items to the start of the row */
+    grid-auto-rows: min-content; 
+    align-items: start; 
   }
 
   .inventory__card {
-    break-inside: avoid; /* Prevent cards from breaking across pages */
-    page-break-inside: avoid; /* Prevent cards from breaking across pages */
+    break-inside: avoid;
+    page-break-inside: avoid; 
   }
 
   .inventory__expand {
-    grid-column: 1 / -1; /* Makes expanded content take full width */
+    grid-column: 1 / -1;å
   }
 
   .filters {
@@ -983,5 +983,10 @@ body {
     left: 0;
     right: 0;
     background: white;
+  }
+}
+@media (min-width: 900px) {
+  .inventory {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
