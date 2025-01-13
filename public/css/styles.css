@@ -961,6 +961,11 @@ body {
     gap: 1.5rem;
   }
 
+  .filters {
+    margin: auto;
+    max-width: 1200px;
+  }
+
   .footer {
     position: fixed;
     bottom: 0;
