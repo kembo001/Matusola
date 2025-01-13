@@ -945,3 +945,27 @@ body {
   background: #2196f3;
   color: white;
 }
+
+@media (min-width: 768px) {
+  .cards {
+    display: flex;
+    flex-direction: row;
+  }
+  .card {
+    max-width: 50%;
+    height: 300px;
+  }
+
+  .inventory {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+  }
+}
