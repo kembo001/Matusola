@@ -967,6 +967,10 @@ body {
     page-break-inside: avoid; /* Prevent cards from breaking across pages */
   }
 
+  .inventory__expand {
+    grid-column: 1 / -1; /* Makes expanded content take full width */
+  }
+
   .filters {
     margin: auto;
     max-width: 1200px;
