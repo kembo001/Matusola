@@ -960,6 +960,7 @@ body {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     grid-auto-rows: min-content; /* This makes rows only as tall as needed */
+    align-items: start; /* Aligns items to the start of the row */
   }
 
   .inventory__card {
