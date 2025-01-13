@@ -88,7 +88,7 @@ app.get("/admin", basicAuth, async (req, res) => {
 
 app.get("/inventory", (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = 10;
+  const limit = 5;
   const offset = (page - 1) * limit;
 
   // Set default values for filters
