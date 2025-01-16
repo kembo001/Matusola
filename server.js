@@ -23,6 +23,32 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
+// Serve robots.txt - WEB Crawlers use this to know what they can index
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.send("User-agent: *\nAllow: /\nSitemap: https://wholesalecarsmn.com/sitemap.xml");
+});
+
+// Serve sitemap.xml
+app.get("/sitemap.xml", (req, res) => {
+  res.header("Content-Type", "application/xml");
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://wholesalecarsmn.com/</loc>
+    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://wholesalecarsmn.com/inventory</loc>
+    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+</urlset>`);
+});
+
 // AUTH FUNCTION FOR ADMIN ROUTE
 function basicAuth(req, res, next) {
   // Add no-cache headers
