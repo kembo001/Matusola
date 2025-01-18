@@ -6,172 +6,266 @@
     <link rel="stylesheet" href="/css/styles.css" />
     <title>Admin - Add Vehicle</title>
   </head>
-  <body>
-    <div class="banner">
-      <a href="/" class="banner__title">Wholesale Cars</a>
-      <a href="https://maps.app.goo.gl/oiKn7Hk6RhoiGgvX9" target="_blank" class="banner__address">📍 7820 Riverdale drive NW, Ramsey, MN 55303 </a>
-      <div class="banner__phones">
-        <a href="tel:763-242-6155" class="banner__phone">📞 (763) 242-6155 </a>
-        <a href="tel:612-459-9927" class="banner__phone">- (612) 459-9927 </a>
+  <body class="min-h-screen bg-gray-50">
+    <!-- Header Banner -->
+    <header class="bg-white sticky top-0 z-50 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
+        <a href="/" class="text-2xl font-bold text-gray-900 hover:text-gray-700 transition-colors"> Wholesale Cars </a>
+        <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 text-sm">
+          <a href="https://maps.app.goo.gl/oiKn7Hk6RhoiGgvX9" target="_blank" class="flex items-center text-gray-600 hover:text-gray-900 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            7820 Riverdale drive NW, Ramsey, MN 55303
+          </a>
+          <div class="flex items-center space-x-2">
+            <a href="tel:763-242-6155" class="flex items-center text-gray-600 hover:text-gray-900 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                />
+              </svg>
+              (763) 242-6155
+            </a>
+            <span class="text-gray-400">|</span>
+            <a href="tel:612-459-9927" class="text-gray-600 hover:text-gray-900 transition">(612) 459-9927</a>
+          </div>
+        </div>
       </div>
-    </div>
+    </header>
 
-    <div class="admin">
-      <h1 class="admin__title">Add New Vehicle</h1>
+    <main class="max-w-4xl mx-auto px-4 py-8">
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">Add New Vehicle</h1>
 
-      <form class="admin__form" action="/add-vehicle" method="POST" enctype="multipart/form-data" id="vehicleForm">
-        <div class="admin__group">
-          <label for="title">Vehicle Title*</label>
-          <input type="text" id="title" name="title" required placeholder="2017 Ford Escape SE 4x4" />
-        </div>
-
-        <div class="admin__row">
-          <div class="admin__group">
-            <label for="year">Year*</label>
-            <select id="year" name="year" required>
-              <option value="">Select Year</option>
-              <% for(let y = new Date().getFullYear(); y >= 1990; y--) { %>
-              <option value="<%= y %>"><%= y %></option>
-              <% } %>
-            </select>
-          </div>
-
-          <div class="admin__group">
-            <label for="make">Make*</label>
-            <input type="text" id="make" name="make" required placeholder="Ford, Toyota, Kia" />
-          </div>
-
-          <div class="admin__group">
-            <label for="model">Model*</label>
-            <input type="text" id="model" name="model" required placeholder="Escape, Camry, Forte" />
-          </div>
-        </div>
-
-        <div class="admin__row">
-          <div class="admin__group">
-            <label for="price">Price*</label>
-            <input type="number" id="price" name="price" required min="0" step="1" placeholder="7999,600,11877" />
-          </div>
-
-          <div class="admin__group">
-            <label for="mileage">Mileage*</label>
-            <input type="number" id="mileage" name="mileage" required min="0" step="1" placeholder="102004,75333" />
-          </div>
-        </div>
-
-        <div class="admin__row">
-          <div class="admin__group">
-            <label for="trim">Trim</label>
-            <input type="text" id="trim" name="trim" placeholder="SE,EX-L,LX,Premium" />
-          </div>
-
-          <div class="admin__group">
-            <label for="vin">VIN</label>
+        <form action="/add-vehicle" method="POST" enctype="multipart/form-data" id="vehicleForm" class="space-y-6">
+          <!-- Title Field -->
+          <div class="space-y-1">
+            <label for="title" class="block text-sm font-medium text-gray-700">Vehicle Title*</label>
             <input
               type="text"
-              id="vin"
-              name="vin"
-              placeholder="1FMCU9G95HUC49078"
-              pattern="[A-HJ-NPR-Z0-9]{17}"
-              oninput="this.value = this.value.toUpperCase()"
-              title="Please enter a valid 17-character VIN"
+              id="title"
+              name="title"
+              required
+              placeholder="2017 Ford Escape SE 4x4"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-        </div>
 
-        <div class="admin__row">
-          <div class="admin__group">
-            <label for="engine">Engine</label>
-            <input type="text" id="engine" name="engine" placeholder="2.0L I4 F DOHC 16V" />
+          <!-- Year, Make, Model, Trim Row -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="space-y-1">
+              <label for="year" class="block text-sm font-medium text-gray-700">Year*</label>
+              <select id="year" name="year" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Select Year</option>
+                <% for(let y = new Date().getFullYear(); y >= 1990; y--) { %>
+                <option value="<%= y %>"><%= y %></option>
+                <% } %>
+              </select>
+            </div>
+
+            <div class="space-y-1">
+              <label for="make" class="block text-sm font-medium text-gray-700">Make*</label>
+              <input
+                type="text"
+                id="make"
+                name="make"
+                required
+                placeholder="Ford, Toyota, Kia"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label for="model" class="block text-sm font-medium text-gray-700">Model*</label>
+              <input
+                type="text"
+                id="model"
+                name="model"
+                required
+                placeholder="Escape, Camry, Forte"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label for="trim" class="block text-sm font-medium text-gray-700">Trim</label>
+              <input
+                type="text"
+                id="trim"
+                name="trim"
+                placeholder="SE, EX-L, LX, Premium"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
           </div>
 
-          <div class="admin__group">
-            <label for="transmission">Transmission</label>
-            <select id="transmission" name="transmission">
-              <option value="Automatic">Automatic</option>
-              <option value="Manual">Manual</option>
+          <!-- Price and Mileage Row -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label for="price" class="block text-sm font-medium text-gray-700">Price*</label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                required
+                min="0"
+                step="1"
+                placeholder="7999, 600, 11877"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label for="mileage" class="block text-sm font-medium text-gray-700">Mileage*</label>
+              <input
+                type="number"
+                id="mileage"
+                name="mileage"
+                required
+                min="0"
+                step="1"
+                placeholder="102004, 75333"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          <!-- VIN and Engine Row -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label for="vin" class="block text-sm font-medium text-gray-700">VIN</label>
+              <input
+                type="text"
+                id="vin"
+                name="vin"
+                placeholder="1FMCU9G95HUC49078"
+                pattern="[A-HJ-NPR-Z0-9]{17}"
+                title="Please enter a valid 17-character VIN"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 uppercase"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label for="engine" class="block text-sm font-medium text-gray-700">Engine</label>
+              <input
+                type="text"
+                id="engine"
+                name="engine"
+                placeholder="2.0L I4 F DOHC 16V"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          <!-- Transmission, Drivetrain, and Title Status Row -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="space-y-1">
+              <label for="transmission" class="block text-sm font-medium text-gray-700">Transmission</label>
+              <select id="transmission" name="transmission" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="Automatic">Automatic</option>
+                <option value="Manual">Manual</option>
+              </select>
+            </div>
+
+            <div class="space-y-1">
+              <label for="drivetrain" class="block text-sm font-medium text-gray-700">Drivetrain</label>
+              <select id="drivetrain" name="drivetrain" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="Not Specified">Not Specified</option>
+                <option value="2WD">2WD</option>
+                <option value="4WD">4WD</option>
+                <option value="AWD">AWD</option>
+                <option value="FWD">FWD</option>
+                <option value="RWD">RWD</option>
+              </select>
+            </div>
+
+            <div class="space-y-1">
+              <label for="title_status" class="block text-sm font-medium text-gray-700">Title Status</label>
+              <select id="title_status" name="title_status" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="Clean">Clean</option>
+                <option value="Salvage">Salvage</option>
+                <option value="Prior Salvage">Prior Salvage</option>
+                <option value="Junk">Junk</option>
+                <option value="Rebuilt">Rebuilt</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Status Field -->
+          <div class="space-y-1">
+            <label for="status" class="block text-sm font-medium text-gray-700">Status*</label>
+            <select id="status" name="status" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="available">Available</option>
+              <option value="sold">Sold</option>
             </select>
           </div>
-        </div>
 
-        <div class="admin__row">
-          <div class="admin__group">
-            <label for="drivetrain">Drivetrain</label>
-            <select id="drivetrain" name="drivetrain">
-              <option value="Not Specified">Not Specified</option>
-              <option value="2WD">2WD</option>
-              <option value="4WD">4WD</option>
-              <option value="AWD">AWD</option>
-              <option value="FWD">FWD</option>
-              <option value="RWD">RWD</option>
-            </select>
+          <!-- Image Upload Section -->
+          <div class="space-y-2">
+            <label for="images" class="block text-sm font-medium text-gray-700">Vehicle Images*</label>
+            <input
+              type="file"
+              id="images"
+              name="images"
+              multiple
+              accept="image/*"
+              required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              <!-- Images will be displayed here -->
+            </div>
           </div>
 
-          <div class="admin__group">
-            <label for="title_status">Title Status</label>
-            <select id="title_status" name="title_status" required>
-              <option value="Clean">Clean</option>
-              <option value="Salvage">Salvage</option>
-              <option value="Prior Salvage">Prior Salvage</option>
-              <option value="Junk">Junk</option>
-              <option value="Rebuilt">Rebuilt</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="admin__group">
-          <label for="status">Status*</label>
-          <select id="status" name="status" required>
-            <option value="available">Available</option>
-            <option value="sold">Sold</option>
-          </select>
-        </div>
-
-        <div class="admin__group">
-          <label for="images">Vehicle Images*</label>
-          <input type="file" id="images" name="images" multiple accept="image/*" required style="margin-bottom: 1rem" />
-          <div id="imagePreview" class="admin__preview">
-            <!-- Images will be displayed here -->
-          </div>
-        </div>
-
-        <button type="submit" class="admin__submit">Add Vehicle</button>
-      </form>
-    </div>
-
-    <div id="loadingOverlay" class="loading-overlay" style="display: none">
-      <div class="loading-content">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Uploading vehicle and images...</div>
+          <button type="submit" class="w-full bg-gray-900 text-white py-3 px-6 rounded-lg hover:bg-gray-800 transition-colors">Add Vehicle</button>
+        </form>
       </div>
-    </div>
 
-    <div class="admin__vehicles">
-      <h2 class="admin__subtitle">Manage Vehicles</h2>
-
-      <div class="admin__vehicle-list">
-        <% vehicles.forEach(vehicle => { %>
-        <div class="admin__vehicle-item">
-          <img src="https://wholesalecars.sfo3.cdn.digitaloceanspaces.com/<%= vehicle.images_folder %>/1.jpg" alt="<%= vehicle.title %>" class="admin__vehicle-thumb" />
-          <div class="admin__vehicle-info">
-            <h3><%= vehicle.title %></h3>
-            <p>$<%= vehicle.price %> - <%= vehicle.status %></p>
-          </div>
-          <div class="admin__actions">
-            <form action="/toggle-status/<%= vehicle.id %>" method="POST" class="admin__status-form">
-              <button type="submit" class="admin__status-btn <%= vehicle.status === 'available' ? 'available' : 'sold' %>">
-                <%= vehicle.status === 'available' ? 'Mark Sold' : 'Mark Available' %>
-              </button>
-            </form>
-
-            <form action="/delete-vehicle/<%= vehicle.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this vehicle?');">
-              <button type="submit" class="admin__delete-btn">Delete</button>
-            </form>
-          </div>
+      <!-- Loading Overlay -->
+      <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none">
+        <div class="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
+          <div class="w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <div class="text-gray-900 font-medium">Uploading vehicle and images...</div>
         </div>
-        <% }); %>
       </div>
-    </div>
+
+      <!-- Vehicle Management Section -->
+      <div class="mt-8 bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-900 mb-6">Manage Vehicles</h2>
+
+        <div class="grid grid-cols-1 gap-4">
+          <% vehicles.forEach(vehicle => { %>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border border-gray-200 rounded-lg gap-4">
+            <div class="flex items-center space-x-4">
+              <img src="https://wholesalecars.sfo3.cdn.digitaloceanspaces.com/<%= vehicle.images_folder %>/1.jpg" alt="<%= vehicle.title %>" class="w-24 h-16 object-cover rounded-lg" />
+              <div>
+                <h3 class="font-medium text-gray-900"><%= vehicle.title %></h3>
+                <p class="text-sm text-gray-500">$<%= vehicle.price.toLocaleString() %> - <%= vehicle.status %></p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2 self-end sm:self-auto">
+              <form action="/toggle-status/<%= vehicle.id %>" method="POST">
+                <button
+                  type="submit"
+                  class="px-4 py-2 rounded-lg text-sm font-medium <%= vehicle.status === 'available' ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' %> transition-colors whitespace-nowrap"
+                >
+                  <%= vehicle.status === 'available' ? 'Mark Sold' : 'Mark Available' %>
+                </button>
+              </form>
+              <form action="/delete-vehicle/<%= vehicle.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this vehicle?');">
+                <button type="submit" class="px-4 py-2 bg-red-100 text-red-800 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors">Delete</button>
+              </form>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+    </main>
 
     <script>
       // Auto-capitalize VIN
@@ -197,20 +291,19 @@
           files.forEach((file, index) => {
             const reader = new FileReader();
             const preview = document.createElement("div");
-            preview.className = "admin__preview-item";
+            preview.className = "relative group";
             preview.draggable = true;
 
             reader.onload = function (e) {
               preview.innerHTML = `
-                <img src="${e.target.result}" alt="Preview">
-                <div class="admin__preview-info">
-                  <span>Image ${index + 1}</span>
-                  <button type="button" onclick="removeImage(${index})" class="admin__preview-remove">×</button>
+                <img src="${e.target.result}" alt="Preview" class="w-full aspect-[4/3] object-cover rounded-lg">
+                <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-between p-2">
+                  <span class="text-white text-sm">Image ${index + 1}</span>
+                  <button type="button" onclick="removeImage(${index})" class="text-white hover:text-red-500 transition-colors">×</button>
                 </div>
               `;
             };
 
-            // Drag and drop handlers
             preview.addEventListener("dragstart", handleDragStart);
             preview.addEventListener("dragover", handleDragOver);
             preview.addEventListener("drop", handleDrop);
@@ -226,7 +319,7 @@
 
         function handleDragStart(e) {
           draggedItem = this;
-          this.classList.add("dragging");
+          this.classList.add("opacity-50");
         }
 
         function handleDragOver(e) {
@@ -237,12 +330,10 @@
           e.preventDefault();
           if (this === draggedItem) return;
 
-          // Get positions
-          const allItems = [...previewContainer.querySelectorAll(".admin__preview-item")];
+          const allItems = [...previewContainer.querySelectorAll(".relative")];
           const draggedIdx = allItems.indexOf(draggedItem);
           const droppedIdx = allItems.indexOf(this);
 
-          // Reorder files array
           const tempFile = files[draggedIdx];
           files.splice(draggedIdx, 1);
           files.splice(droppedIdx, 0, tempFile);
@@ -251,28 +342,19 @@
         }
 
         function handleDragEnd(e) {
-          this.classList.remove("dragging");
+          this.classList.remove("opacity-50");
         }
 
-        // Modify form submission
         form.addEventListener("submit", function (e) {
           e.preventDefault();
-
-          // Show loading overlay
           loadingOverlay.style.display = "flex";
 
-          // Create a new FormData object
           const formData = new FormData(form);
-
-          // Remove the original files
           formData.delete("images");
-
-          // Add only the files we want to keep
-          files.forEach((file, index) => {
+          files.forEach((file) => {
             formData.append("images", file);
           });
 
-          // Submit the form with our modified files
           fetch("/add-vehicle", {
             method: "POST",
             body: formData,
@@ -286,17 +368,14 @@
             })
             .catch((error) => {
               console.error("Error:", error);
-              loadingOverlay.style.display = "none"; // Hide on error
+              loadingOverlay.style.display = "none";
               window.location.href = "/admin?error=true";
             });
         });
 
-        // Update removeImage function
         window.removeImage = function (index) {
           files.splice(index, 1);
           updatePreview();
-
-          // If no files left, clear the input
           if (files.length === 0) {
             imageInput.value = "";
           }
