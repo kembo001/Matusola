@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Essential Meta Tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Primary Meta Tags -->
+    <meta name="description" content="Taxes and fees calculator for buying and selling a vehicle in Minnesota" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Taxes and Fees Calculator - Wholesale Cars MN" />
+    <meta property="og:description" content="Find quality pre-owned vehicles at Wholesale Cars in Ramsey, MN. Weekly auto auctions, nationwide shipping, and hassle-free consignment available." />
+    <meta property="og:image" content="https://www.wholesalecarsmn.com/images/our-inventory.jpg" />
+    <meta property="og:url" content="https://www.wholesalecarsmn.com/calculator" />
+
+    <!-- Title and Canonical -->
+    <title>Calculator | Wholesale Cars MN</title>
+    <link rel="canonical" href="https://www.wholesalecarsmn.com/calculator" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/styles.css" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <meta name="msapplication-TileImage" content="/favicon/favicon-96x96.png" />
+  </head>
+  <body class="bg-gray-50">
+    <!-- Header Banner -->
+    <header class="bg-white sticky top-0 z-50 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
+        <a href="/" class="text-2xl font-bold text-gray-900 hover:text-gray-700 transition-colors"> Wholesale Cars </a>
+        <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 text-sm">
+          <a href="https://maps.app.goo.gl/oiKn7Hk6RhoiGgvX9" target="_blank" class="flex items-center text-gray-600 hover:text-gray-900 transition group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="font-medium tracking-wide group-hover:text-blue-600">7820 Riverdale drive NW, Ramsey, MN 55303</span>
+          </a>
+          <div class="hidden sm:flex items-center space-x-2">
+            <div class="relative">
+              <a href="tel:763-242-6155" class="flex items-center text-gray-600 hover:text-gray-900 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                <span class="flex flex-col">
+                  <span>(763) 242-6155</span>
+                  <span class="text-xs text-gray-500">Blake</span>
+                </span>
+              </a>
+            </div>
+            <span class="text-gray-400">|</span>
+            <div class="relative">
+              <a href="tel:612-459-9927" class="flex items-center text-gray-600 hover:text-gray-900 transition">
+                <span class="flex flex-col">
+                  <span>(612) 459-9927</span>
+                  <span class="text-xs text-gray-500">Solomon</span>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Mobile Phone Numbers (visible only on small screens) -->
+          <div class="flex sm:hidden justify-center w-full gap-4 text-sm">
+            <div class="flex flex-col items-center">
+              <a href="tel:763-242-6155" class="text-gray-600 hover:text-gray-900 transition">(763) 242-6155</a>
+              <span class="text-xs text-gray-500">Blake</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <a href="tel:612-459-9927" class="text-gray-600 hover:text-gray-900 transition">(612) 459-9927</a>
+              <span class="text-xs text-gray-500">Solomon</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="calculator-container max-w-2xl mx-auto p-6 my-8">
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Out-the-Door Pricing Calculator</h1>
+
+        <form id="pricing-calculator" class="space-y-6">
+          <!-- Price Inputs -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="price-input">
+              <label for="sale-price" class="block text-sm font-medium text-gray-700 mb-1"> Sale Price ($) </label>
+              <input
+                type="number"
+                id="sale-price"
+                class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter sale price"
+                step="0.01"
+              />
+            </div>
+
+            <div class="price-input">
+              <label for="total-price" class="block text-sm font-medium text-gray-700 mb-1"> Total Price ($) </label>
+              <input
+                type="number"
+                id="total-price"
+                class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter total price"
+                step="0.01"
+              />
+            </div>
+          </div>
+
+          <!-- Vehicle Details -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="vehicle-age">
+              <label for="vehicle-age" class="block text-sm font-medium text-gray-700 mb-1"> Vehicle Age </label>
+              <select id="vehicle-age" class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <option value="10+">10 years or older</option>
+                <option value="<10">Less than 10 years</option>
+              </select>
+            </div>
+
+            <div class="doc-fee">
+              <label for="doc-fee" class="block text-sm font-medium text-gray-700 mb-1"> Documentation Fee </label>
+              <select id="doc-fee" class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <option value="200">$200</option>
+                <option value="275">$275</option>
+              </select>
+            </div>
+
+            <div class="county-selector">
+              <label for="county" class="block text-sm font-medium text-gray-700 mb-1"> County (Wheelage Tax) </label>
+              <select id="county" class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Select County</option>
+                <!-- Counties will be populated by JavaScript -->
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <!-- Custom Wheelage Input (initially hidden) -->
+            <div id="custom-wheelage-section" class="hidden">
+              <label for="custom-wheelage" class="block text-sm font-medium text-gray-700 mb-1"> Custom Wheelage Tax ($) </label>
+              <input
+                type="number"
+                id="custom-wheelage"
+                class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter wheelage tax"
+                min="0"
+                step="5"
+              />
+            </div>
+          </div>
+
+          <!-- Registration Fee Section (initially hidden) -->
+          <div id="registration-section" class="hidden mt-6">
+            <div class="bg-blue-50 rounded-md p-4 border border-blue-200">
+              <div class="flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm text-blue-700 mb-3">For vehicles less than 10 years old, please look up the registration fee on the MN DVS website.</p>
+                  <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <a
+                      href="https://onlineservices.dps.mn.gov/EServices/?Link=EstimateRegTax"
+                      target="_blank"
+                      class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    >
+                      <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      Look Up Registration Fee
+                    </a>
+                    <div class="flex-1">
+                      <input
+                        type="number"
+                        id="registration-input"
+                        class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Enter registration fee"
+                        step="0.01"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lien Checkbox -->
+          <div class="flex items-center">
+            <input type="checkbox" id="lien-fee" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+            <label for="lien-fee" class="ml-2 block text-sm text-gray-700"> Vehicle has a lien ($2 fee) </label>
+          </div>
+        </form>
+
+        <!-- Results Section -->
+        <div class="results mt-8 p-6 bg-gray-50 rounded-lg">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Price Breakdown</h2>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Sale Price:</span>
+              <span class="font-medium">$<span id="sale-price-result">0.00</span></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Sales Tax:</span>
+              <span class="font-medium">$<span id="sales-tax">0.00</span></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Registration Fee:</span>
+              <span class="font-medium">$<span id="registration-fee">0.00</span></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Documentation Fee:</span>
+              <span class="font-medium">$<span id="doc-fee-result">0.00</span></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Lien Fee:</span>
+              <span class="font-medium">$<span id="lien-fee-result">0.00</span></span>
+            </div>
+            <div class="pt-3 border-t border-gray-200">
+              <h3 class="text-sm font-medium text-gray-700 mb-2">Government Fees</h3>
+              <div class="space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-gray-600">License Plate Fee:</span>
+                  <span class="font-medium">$<span id="plate-fee">0.00</span></span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Anoka County Transfer Tax:</span>
+                  <span class="font-medium">$<span id="county-tax">0.00</span></span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Technology Surcharge:</span>
+                  <span class="font-medium">$<span id="tech-surcharge">0.00</span></span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Title Fee:</span>
+                  <span class="font-medium">$<span id="title-fee">0.00</span></span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Transfer Tax:</span>
+                  <span class="font-medium">$<span id="transfer-tax">0.00</span></span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Public Safety Fee:</span>
+                  <span class="font-medium">$<span id="safety-fee">0.00</span></span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">State Filing Fee:</span>
+                  <span class="font-medium">$<span id="filing-fee">0.00</span></span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">County Wheelage Tax:</span>
+                  <span class="font-medium">$<span id="wheelage-tax">0.00</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="pt-3 border-t border-gray-200">
+              <div class="flex justify-between font-semibold text-lg">
+                <span>Total Out-the-Door Price:</span>
+                <span>$<span id="final-total-price">0.00</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Constants for Fees
+      const FEES = {
+        SALES_TAX_RATE: 0.06875,
+        IN_LIEU_TAX: 10,
+        REGISTRATION_FEE_10_PLUS: 30,
+        LICENSE_PLATE_FEE: 15.5,
+        ANOKA_COUNTY_TRANSFER_TAX: 20,
+        TECHNOLOGY_SURCHARGE: 2.25,
+        TITLE_FEE: 8.25,
+        TRANSFER_TAX: 10,
+        PUBLIC_SAFETY_FEE: 3.5,
+        STATE_FILING_FEE: 13,
+        LIEN_FEE: 2,
+        WHEELAGE_TAX: 0, // This will be updated dynamically
+      };
+
+      // Input handling for sale price and total price
+      const saleInput = document.getElementById("sale-price");
+      const totalInput = document.getElementById("total-price");
+
+      saleInput.addEventListener("input", () => {
+        if (saleInput.value) {
+          totalInput.value = "";
+          calculate();
+        }
+      });
+
+      totalInput.addEventListener("input", () => {
+        if (totalInput.value) {
+          saleInput.value = "";
+          calculate();
+        }
+      });
+
+      let customRegistrationFee = null;
+
+      // Vehicle age change handler
+      document.getElementById("vehicle-age").addEventListener("change", function (e) {
+        const registrationSection = document.getElementById("registration-section");
+
+        if (e.target.value === "<10") {
+          registrationSection.classList.remove("hidden");
+          customRegistrationFee = null;
+          resetCalculator();
+        } else {
+          registrationSection.classList.add("hidden");
+          customRegistrationFee = null;
+          calculate();
+        }
+      });
+
+      // Doc fee change handler
+      document.getElementById("doc-fee").addEventListener("change", calculate);
+
+      // Lien fee change handler
+      document.getElementById("lien-fee").addEventListener("change", calculate);
+
+      // Registration input handler
+      document.getElementById("registration-input").addEventListener("input", function (e) {
+        const regFee = parseFloat(e.target.value);
+
+        if (regFee && regFee >= 0) {
+          customRegistrationFee = regFee;
+          this.classList.remove("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+          calculate();
+        } else {
+          customRegistrationFee = null;
+          this.classList.add("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+          resetCalculator();
+        }
+      });
+
+      // Add the county tax pairs constant
+      const countyTaxPairs = [
+        { county: "Benton", tax: 20 },
+        { county: "Big Stone", tax: 10 },
+        { county: "Brown", tax: 20 },
+        { county: "Carlton", tax: 15 },
+        { county: "Carver", tax: 20 },
+        { county: "Chisago", tax: 10 },
+        { county: "Clay", tax: 10 },
+        { county: "Cottonwood", tax: 10 },
+        { county: "Dakota", tax: 10 },
+        { county: "Dodge", tax: 20 },
+        { county: "Faribault", tax: 10 },
+        { county: "Fillmore", tax: 20 },
+        { county: "Freeborn", tax: 20 },
+        { county: "Goodhue", tax: 10 },
+        { county: "Hennepin", tax: 20 },
+        { county: "Houston", tax: 10 },
+        { county: "Isanti", tax: 10 },
+        { county: "Itasca", tax: 10 },
+        { county: "Jackson", tax: 10 },
+        { county: "Kanabec", tax: 10 },
+        { county: "Kandiyohi", tax: 10 },
+        { county: "Lac qui Parle", tax: 10 },
+        { county: "Le Sueur", tax: 10 },
+        { county: "Lincoln", tax: 10 },
+        { county: "Lyon", tax: 10 },
+        { county: "Marshall", tax: 10 },
+        { county: "Martin", tax: 10 },
+        { county: "Mille Lacs", tax: 20 },
+        { county: "Mower", tax: 10 },
+        { county: "Murray", tax: 10 },
+        { county: "Nicollet", tax: 20 },
+        { county: "Nobles", tax: 10 },
+        { county: "Norman", tax: 10 },
+        { county: "Olmsted", tax: 10 },
+        { county: "Otter Tail", tax: 20 },
+        { county: "Pennington", tax: 10 },
+        { county: "Pipestone", tax: 15 },
+        { county: "Pope", tax: 20 },
+        { county: "Ramsey", tax: 20 },
+        { county: "Redwood", tax: 20 },
+        { county: "Renville", tax: 10 },
+        { county: "Rice", tax: 20 },
+        { county: "Rock", tax: 10 },
+        { county: "Scott", tax: 10 },
+        { county: "Sherburne", tax: 20 },
+        { county: "Sibley", tax: 10 },
+        { county: "Stearns", tax: 10 },
+        { county: "Steele", tax: 20 },
+        { county: "Stevens", tax: 15 },
+        { county: "Swift", tax: 10 },
+        { county: "Wabasha", tax: 20 },
+        { county: "Waseca", tax: 10 },
+        { county: "Washington", tax: 20 },
+        { county: "Watonwan", tax: 15 },
+      ];
+
+      // Sort counties alphabetically
+      countyTaxPairs.sort((a, b) => a.county.localeCompare(b.county));
+
+      // Populate county dropdown
+      const countySelect = document.getElementById("county");
+      countyTaxPairs.forEach((pair) => {
+        const option = document.createElement("option");
+        option.value = pair.county;
+        option.textContent = `${pair.county} ($${pair.tax})`;
+        countySelect.insertBefore(option, countySelect.lastElementChild);
+      });
+
+      // Handle county selection change
+      let currentWheelage = 0;
+      countySelect.addEventListener("change", function (e) {
+        const customWheelageSection = document.getElementById("custom-wheelage-section");
+        const customWheelageInput = document.getElementById("custom-wheelage");
+
+        if (e.target.value === "other") {
+          customWheelageSection.classList.remove("hidden");
+          currentWheelage = 0;
+          customWheelageInput.value = "";
+        } else if (e.target.value === "") {
+          customWheelageSection.classList.add("hidden");
+          currentWheelage = 0;
+        } else {
+          customWheelageSection.classList.add("hidden");
+          const countyData = countyTaxPairs.find((pair) => pair.county === e.target.value);
+          currentWheelage = countyData.tax;
+        }
+        calculate();
+      });
+
+      // Handle custom wheelage input
+      document.getElementById("custom-wheelage").addEventListener("input", function (e) {
+        const wheelage = parseFloat(e.target.value);
+        if (wheelage >= 0) {
+          currentWheelage = wheelage;
+          calculate();
+        } else {
+          currentWheelage = 0;
+        }
+      });
+
+      function resetCalculator() {
+        // Reset all result fields including new government fees
+        const resultFields = [
+          "sale-price-result",
+          "sales-tax",
+          "registration-fee",
+          "doc-fee-result",
+          "lien-fee-result",
+          "final-total-price",
+          "plate-fee",
+          "county-tax",
+          "tech-surcharge",
+          "title-fee",
+          "transfer-tax",
+          "safety-fee",
+          "filing-fee",
+          "wheelage-tax",
+        ];
+
+        resultFields.forEach((field) => {
+          document.getElementById(field).textContent = "0.00";
+        });
+
+        // Reset wheelage
+        currentWheelage = 0;
+      }
+
+      function calculate() {
+        const vehicleAge = document.getElementById("vehicle-age").value;
+
+        // Check if registration fee is needed but not provided
+        if (vehicleAge === "<10" && customRegistrationFee === null) {
+          const registrationInput = document.getElementById("registration-input");
+          registrationInput.classList.add("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+          resetCalculator();
+          return;
+        }
+
+        const salePrice = parseFloat(saleInput.value) || 0;
+        const totalPrice = parseFloat(totalInput.value) || 0;
+        const docFee = parseFloat(document.getElementById("doc-fee").value);
+        const hasLien = document.getElementById("lien-fee").checked;
+
+        // Update wheelage in FEES before calculating fixed fees
+        FEES.WHEELAGE_TAX = currentWheelage;
+
+        // Calculate all fixed fees including wheelage
+        const fixedFees =
+          FEES.LICENSE_PLATE_FEE + FEES.ANOKA_COUNTY_TRANSFER_TAX + FEES.TECHNOLOGY_SURCHARGE + FEES.TITLE_FEE + FEES.TRANSFER_TAX + FEES.PUBLIC_SAFETY_FEE + FEES.STATE_FILING_FEE + FEES.WHEELAGE_TAX;
+
+        // Calculate variable fees
+        const lienFee = hasLien ? FEES.LIEN_FEE : 0;
+        const registrationFee = vehicleAge === "10+" ? FEES.REGISTRATION_FEE_10_PLUS : customRegistrationFee;
+        const totalFixedFees = fixedFees + docFee + lienFee + registrationFee;
+
+        let finalSalePrice, finalTotalPrice, salesTax;
+
+        if (salePrice > 0) {
+          // Forward calculation (from sale price to total)
+          const isInLieuTaxEligible = vehicleAge === "10+" && salePrice < 3000;
+          salesTax = isInLieuTaxEligible ? FEES.IN_LIEU_TAX : salePrice * FEES.SALES_TAX_RATE;
+          finalTotalPrice = salePrice + salesTax + totalFixedFees;
+          finalSalePrice = salePrice;
+        } else if (totalPrice > 0) {
+          // Backward calculation (from total price to sale)
+          // First, subtract all fixed fees from total price
+          const remainingForSaleAndTax = totalPrice - totalFixedFees;
+
+          // Check if the calculated sale price would be under $3000 for in-lieu tax
+          const estimatedSalePrice = remainingForSaleAndTax / (1 + FEES.SALES_TAX_RATE);
+          const isInLieuTaxEligible = vehicleAge === "10+" && estimatedSalePrice < 3000;
+
+          if (isInLieuTaxEligible) {
+            // If eligible for in-lieu tax, subtract flat tax rate
+            finalSalePrice = remainingForSaleAndTax - FEES.IN_LIEU_TAX;
+            salesTax = FEES.IN_LIEU_TAX;
+          } else {
+            // Otherwise, calculate sale price with percentage tax
+            finalSalePrice = remainingForSaleAndTax / (1 + FEES.SALES_TAX_RATE);
+            salesTax = finalSalePrice * FEES.SALES_TAX_RATE;
+          }
+          finalTotalPrice = totalPrice;
+        }
+
+        updateDisplay({
+          salePrice: finalSalePrice,
+          salesTax,
+          registrationFee,
+          docFee,
+          lienFee,
+          totalPrice: finalTotalPrice,
+        });
+      }
+
+      function updateDisplay(results) {
+        document.getElementById("sale-price-result").textContent = results.salePrice.toFixed(2);
+        document.getElementById("sales-tax").textContent = results.salesTax.toFixed(2);
+        document.getElementById("registration-fee").textContent = results.registrationFee.toFixed(2);
+        document.getElementById("doc-fee-result").textContent = results.docFee.toFixed(2);
+        document.getElementById("lien-fee-result").textContent = results.lienFee.toFixed(2);
+        document.getElementById("final-total-price").textContent = results.totalPrice.toFixed(2);
+
+        // Update government fees
+        document.getElementById("plate-fee").textContent = FEES.LICENSE_PLATE_FEE.toFixed(2);
+        document.getElementById("county-tax").textContent = FEES.ANOKA_COUNTY_TRANSFER_TAX.toFixed(2);
+        document.getElementById("tech-surcharge").textContent = FEES.TECHNOLOGY_SURCHARGE.toFixed(2);
+        document.getElementById("title-fee").textContent = FEES.TITLE_FEE.toFixed(2);
+        document.getElementById("transfer-tax").textContent = FEES.TRANSFER_TAX.toFixed(2);
+        document.getElementById("safety-fee").textContent = FEES.PUBLIC_SAFETY_FEE.toFixed(2);
+        document.getElementById("filing-fee").textContent = FEES.STATE_FILING_FEE.toFixed(2);
+        document.getElementById("wheelage-tax").textContent = FEES.WHEELAGE_TAX.toFixed(2);
+      }
+    </script>
+  </body>
+</html>

@@ -112,6 +112,12 @@ app.get("/admin", basicAuth, async (req, res) => {
 
 // END OF AUTH FUNCTION AND ADMIN ROUTE
 
+// Taxes and Fees Route
+app.get("/calculator", (req, res) => {
+  res.render("calculator");
+});
+
+// Inventory Route
 app.get("/inventory", (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = 6;
