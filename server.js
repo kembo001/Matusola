@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
 // Serve robots.txt - WEB Crawlers use this to know what they can index
 app.get("/robots.txt", (req, res) => {
   res.type("text/plain");
-  res.send("User-agent: *\nAllow: /\nSitemap: https://wholesalecarsmn.com/sitemap.xml");
+  res.send("User-agent: *\nDisallow: /admin\nAllow: /\nSitemap: https://wholesalecarsmn.com/sitemap.xml");
 });
 
 // Serve sitemap.xml
