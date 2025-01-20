@@ -109,17 +109,18 @@
       <!-- Hero Section -->
       <section class="relative bg-gray-900 text-white">
         <div class="absolute inset-0">
-          <img
-            srcset="/images/hero-bg-small.webp 480w, /images/hero-bg-medium.webp 800w, /images/hero-bg-large.webp 1200w, /images/hero-bg.webp 1792w"
-            sizes="100vw"
-            src="/images/hero-bg.jpeg"
-            alt="glossy car showroom"
-            class="w-full h-full object-cover opacity-30"
-            width="1792"
-            height="1024"
-            loading="eager"
-            decoding="async"
-          />
+          <picture>
+            <!-- Mobile First approach -->
+            <source media="(max-width: 480px)" srcset="/images/hero-bg-small.webp" type="image/webp" />
+            <!-- Tablet -->
+            <source media="(min-width: 481px) and (max-width: 800px)" srcset="/images/hero-bg-medium.webp" type="image/webp" />
+            <!-- Small Desktop -->
+            <source media="(min-width: 801px) and (max-width: 1200px)" srcset="/images/hero-bg-large.webp" type="image/webp" />
+            <!-- Large Desktop -->
+            <source media="(min-width: 1201px)" srcset="/images/hero-bg.webp" type="image/webp" />
+            <!-- Fallback -->
+            <img src="/images/hero-bg-small.webp" alt="glossy car showroom" class="w-full h-full object-cover opacity-30" width="480" height="275" fetchpriority="high" decoding="async" />
+          </picture>
         </div>
         <div class="relative max-w-7xl mx-auto px-4 py-16 sm:py-24 sm:px-6 lg:px-8">
           <div class="max-w-3xl">
