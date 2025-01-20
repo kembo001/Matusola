@@ -46,6 +46,12 @@ app.get("/sitemap.xml", (req, res) => {
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
+  <url>
+    <loc>https://wholesalecarsmn.com/calculator</loc>
+    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>`);
 });
 
