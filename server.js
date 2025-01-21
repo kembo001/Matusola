@@ -31,6 +31,8 @@ app.get("/robots.txt", (req, res) => {
 
 // Serve sitemap.xml
 app.get("/sitemap.xml", (req, res) => {
+  // Cache for 24 hours (86400 seconds)
+  res.set("Cache-Control", "public, max-age=86400");
   res.header("Content-Type", "application/xml");
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
