@@ -242,7 +242,7 @@
       
       const loadImage = (index) => {
         const img = new Image();
-        img.src = `https://wholesalecars.sfo3.cdn.digitaloceanspaces.com/${imagesFolder}/${index}.jpg`;
+        img.src = `https://wholesalecars.sfo3.cdn.digitaloceanspaces.com/${imagesFolder}/${index}.jpg?t=${Date.now()}`;
         
         img.onload = () => {
           loadedCount++;
