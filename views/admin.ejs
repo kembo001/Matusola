@@ -269,25 +269,10 @@
             <!-- Image management section (hidden by default) -->
             <div class="image-management hidden" data-vehicle-id="<%= vehicle.id %>">
               <div class="current-images grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <% vehicle.images.forEach(image => { %>
-                <div class="image-container relative group" data-image-num="<%= image.number %>" draggable="true">
-                  <img src="<%= image.url %>?t=<%= Date.now() %>" alt="Vehicle image <%= image.number %>" class="w-full aspect-[4/3] object-cover rounded-lg" />
-                  <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
-                    <div class="flex justify-between items-start w-full">
-                      <span class="text-white text-sm bg-black bg-opacity-50 px-2 py-1 rounded">Image <%= image.number %></span>
-                      <button type="button" class="delete-image text-white hover:text-red-500 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path
-                            fill-rule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
+                <!-- Initially only show loading state -->
+                <div class="loading-placeholder flex items-center justify-center p-4">
+                  <div class="w-8 h-8 border-4 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
                 </div>
-                <% }); %>
               </div>
 
               <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
@@ -465,7 +450,7 @@
       });
 
       // Global function for toggling image manager
-      window.toggleImageManager = function (button, vehicleId) {
+      window.toggleImageManager = async function (button, vehicleId) {
         const container = button.closest(".flex-col").querySelector(".image-management");
         if (container.classList.contains("hidden")) {
           // Close any other open image managers first
@@ -473,10 +458,129 @@
             el.classList.add("hidden");
           });
           container.classList.remove("hidden");
+
+          // Only load images if they haven't been loaded yet
+          if (!container.dataset.imagesLoaded) {
+            try {
+              const response = await fetch(`/get-vehicle-images/${vehicleId}`);
+              if (!response.ok) throw new Error("Failed to fetch images");
+              const data = await response.json();
+
+              // Clear loading placeholder and render images
+              const imagesContainer = container.querySelector(".current-images");
+              imagesContainer.innerHTML = data.images
+                .map(
+                  (image) => `
+                <div class="image-container relative group" data-image-num="${image.number}" draggable="true">
+                  <img src="${image.url}?t=${Date.now()}" alt="Vehicle image ${image.number}" class="w-full aspect-[4/3] object-cover rounded-lg" />
+                  <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
+                    <div class="flex justify-between items-start w-full">
+                      <span class="text-white text-sm bg-black bg-opacity-50 px-2 py-1 rounded">Image ${image.number}</span>
+                      <button type="button" class="delete-image text-white hover:text-red-500 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `
+                )
+                .join("");
+
+              // Mark as loaded and set up drag-drop handlers
+              container.dataset.imagesLoaded = "true";
+              setupImageHandlers(container);
+            } catch (error) {
+              console.error("Error loading images:", error);
+              container.querySelector(".current-images").innerHTML = `
+                <div class="col-span-full text-red-600 text-center py-4">
+                  Failed to load images. Please try again.
+                </div>
+              `;
+            }
+          }
         } else {
           container.classList.add("hidden");
         }
       };
+
+      function setupImageHandlers(container) {
+        const imagesContainer = container.querySelector(".current-images");
+        const items = imagesContainer.querySelectorAll(".image-container");
+        let draggedItem = null;
+
+        items.forEach((item) => {
+          item.addEventListener("dragstart", handleDragStart);
+          item.addEventListener("dragend", handleDragEnd);
+          item.addEventListener("dragover", handleDragOver);
+          item.addEventListener("dragenter", handleDragEnter);
+          item.addEventListener("dragleave", handleDragLeave);
+          item.addEventListener("drop", handleDrop);
+
+          // Set up delete button handlers
+          const deleteBtn = item.querySelector(".delete-image");
+          deleteBtn.addEventListener("click", () => {
+            if (item.classList.contains("marked-for-deletion")) {
+              item.classList.remove("marked-for-deletion");
+              item.style.opacity = "1";
+              item.style.filter = "none";
+            } else {
+              item.classList.add("marked-for-deletion");
+              item.style.opacity = "0.5";
+              item.style.filter = "grayscale(100%)";
+            }
+          });
+        });
+
+        function handleDragStart(e) {
+          draggedItem = this;
+          this.classList.add("dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", this.dataset.imageNum);
+        }
+
+        function handleDragEnd(e) {
+          this.classList.remove("dragging");
+          imagesContainer.querySelectorAll(".image-container").forEach((item) => {
+            item.classList.remove("drag-over");
+          });
+        }
+
+        function handleDragOver(e) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+        }
+
+        function handleDragEnter(e) {
+          e.preventDefault();
+          if (this !== draggedItem) {
+            this.classList.add("drag-over");
+          }
+        }
+
+        function handleDragLeave(e) {
+          this.classList.remove("drag-over");
+        }
+
+        function handleDrop(e) {
+          e.preventDefault();
+          this.classList.remove("drag-over");
+
+          if (this === draggedItem) return;
+
+          const allItems = [...imagesContainer.querySelectorAll(".image-container")];
+          const draggedIdx = allItems.indexOf(draggedItem);
+          const droppedIdx = allItems.indexOf(this);
+
+          // Update DOM
+          if (draggedIdx < droppedIdx) {
+            this.parentNode.insertBefore(draggedItem, this.nextSibling);
+          } else {
+            this.parentNode.insertBefore(draggedItem, this);
+          }
+        }
+      }
 
       // Add this JavaScript to handle preview and ordering
       document.addEventListener("DOMContentLoaded", function () {
@@ -653,91 +757,12 @@
         this.value = this.value.toUpperCase();
       });
 
+      // Add save functionality
       document.querySelectorAll(".image-management").forEach((container) => {
-        const vehicleId = container.dataset.vehicleId;
         const saveButton = container.querySelector(".save-images");
         const fileInput = container.querySelector('input[type="file"]');
-        const imagesContainer = container.querySelector(".current-images");
-        const deletions = new Set();
-        let draggedItem = null;
+        const vehicleId = container.dataset.vehicleId;
 
-        // Handle delete buttons
-        container.querySelectorAll(".delete-image").forEach((button) => {
-          button.addEventListener("click", () => {
-            const imageContainer = button.closest(".image-container");
-            const imageNum = imageContainer.dataset.imageNum;
-
-            if (deletions.has(imageNum)) {
-              deletions.delete(imageNum);
-              imageContainer.style.opacity = "1";
-              imageContainer.style.filter = "none";
-            } else {
-              deletions.add(imageNum);
-              imageContainer.style.opacity = "0.5";
-              imageContainer.style.filter = "grayscale(100%)";
-            }
-          });
-        });
-
-        // Drag and Drop functionality
-        container.querySelectorAll(".image-container").forEach((item) => {
-          item.addEventListener("dragstart", handleDragStart);
-          item.addEventListener("dragend", handleDragEnd);
-          item.addEventListener("dragover", handleDragOver);
-          item.addEventListener("dragenter", handleDragEnter);
-          item.addEventListener("dragleave", handleDragLeave);
-          item.addEventListener("drop", handleDrop);
-        });
-
-        function handleDragStart(e) {
-          draggedItem = this;
-          this.classList.add("dragging");
-          e.dataTransfer.effectAllowed = "move";
-          e.dataTransfer.setData("text/plain", this.dataset.imageNum);
-        }
-
-        function handleDragEnd(e) {
-          this.classList.remove("dragging");
-          imagesContainer.querySelectorAll(".image-container").forEach((item) => {
-            item.classList.remove("drag-over");
-          });
-        }
-
-        function handleDragOver(e) {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = "move";
-        }
-
-        function handleDragEnter(e) {
-          e.preventDefault();
-          if (this !== draggedItem) {
-            this.classList.add("drag-over");
-          }
-        }
-
-        function handleDragLeave(e) {
-          this.classList.remove("drag-over");
-        }
-
-        function handleDrop(e) {
-          e.preventDefault();
-          this.classList.remove("drag-over");
-
-          if (this === draggedItem) return;
-
-          const allItems = [...imagesContainer.querySelectorAll(".image-container")];
-          const draggedIdx = allItems.indexOf(draggedItem);
-          const droppedIdx = allItems.indexOf(this);
-
-          // Update DOM
-          if (draggedIdx < droppedIdx) {
-            this.parentNode.insertBefore(draggedItem, this.nextSibling);
-          } else {
-            this.parentNode.insertBefore(draggedItem, this);
-          }
-        }
-
-        // Handle save button
         saveButton.addEventListener("click", async () => {
           const loadingOverlay = document.createElement("div");
           loadingOverlay.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
@@ -751,6 +776,7 @@
 
           try {
             const formData = new FormData();
+            const imagesContainer = container.querySelector(".current-images");
 
             // Add files
             if (fileInput.files.length > 0) {
@@ -760,12 +786,13 @@
             }
 
             // Add deletions
-            deletions.forEach((imageNum) => {
-              formData.append("deletedImages[]", imageNum);
+            const deletedImages = [...imagesContainer.querySelectorAll(".marked-for-deletion")].map((el) => el.dataset.imageNum);
+            deletedImages.forEach((num) => {
+              formData.append("deletedImages[]", num);
             });
 
             // Add image order
-            const currentOrder = [...imagesContainer.querySelectorAll(".image-container")].map((container) => container.dataset.imageNum).filter((num) => !deletions.has(num));
+            const currentOrder = [...imagesContainer.querySelectorAll(".image-container")].map((container) => container.dataset.imageNum).filter((num) => !deletedImages.includes(num));
 
             if (currentOrder.length > 0) {
               formData.append("imageOrder", JSON.stringify(currentOrder));
@@ -800,8 +827,14 @@
               document.body.appendChild(successMessage);
               setTimeout(() => successMessage.remove(), 3000);
 
+              // Reset file input
+              fileInput.value = "";
+
               // Remove loading overlay
               document.body.removeChild(loadingOverlay);
+
+              // Refresh the page to update image count
+              window.location.reload();
             } else {
               throw new Error(result.error || "Unknown error");
             }

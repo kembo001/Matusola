@@ -637,6 +637,28 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
   }
 });
 
+// Add get vehicle images route
+app.get("/get-vehicle-images/:vehicleId", basicAuth, async (req, res) => {
+  try {
+    const vehicle = await new Promise((resolve, reject) => {
+      db.get("SELECT images_folder FROM vehicles WHERE id = ?", [req.params.vehicleId], (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
+    });
+
+    if (!vehicle) {
+      return res.status(404).json({ error: "Vehicle not found" });
+    }
+
+    const vehicleWithImages = await getVehicleImages(vehicle);
+    res.json({ images: vehicleWithImages.images });
+  } catch (error) {
+    console.error("Error fetching vehicle images:", error);
+    res.status(500).json({ error: "Failed to fetch images" });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
