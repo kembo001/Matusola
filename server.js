@@ -333,37 +333,57 @@ app.post("/delete-vehicle/:id", async (req, res) => {
   }
 });
 
-// Add toggle status route
-app.post("/toggle-status/:id", async (req, res) => {
+// Add get vehicle data route
+app.get("/get-vehicle/:id", basicAuth, async (req, res) => {
   try {
-    // First get current status
     const vehicle = await new Promise((resolve, reject) => {
-      db.get("SELECT status FROM vehicles WHERE id = ?", [req.params.id], (err, row) => {
+      db.get("SELECT * FROM vehicles WHERE id = ?", [req.params.id], (err, row) => {
         if (err) reject(err);
         else resolve(row);
       });
     });
 
     if (!vehicle) {
-      throw new Error("Vehicle not found");
+      return res.status(404).json({ error: "Vehicle not found" });
     }
 
-    // Toggle the status
-    const newStatus = vehicle.status === "available" ? "sold" : "available";
+    res.json(vehicle);
+  } catch (error) {
+    console.error("Error fetching vehicle:", error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
 
-    // Update the database
+// Add update vehicle route
+app.post("/update-vehicle/:id", basicAuth, async (req, res) => {
+  try {
+    const { title, year, make, model, trim, price, mileage, vin, engine, transmission, drivetrain, title_status, status } = req.body;
+
+    // Validate required fields
+    if (!title || !year || !make || !model || !price || !mileage) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Update vehicle in database
     await new Promise((resolve, reject) => {
-      db.run("UPDATE vehicles SET status = ? WHERE id = ?", [newStatus, req.params.id], (err) => {
-        if (err) reject(err);
-        else resolve();
-      });
+      db.run(
+        `UPDATE vehicles SET 
+          title = ?, year = ?, make = ?, model = ?, trim = ?,
+          price = ?, mileage = ?, vin = ?, engine = ?, transmission = ?,
+          drivetrain = ?, title_status = ?, status = ?
+          WHERE id = ?`,
+        [title, year, make, model, trim, price, mileage, vin, engine, transmission, drivetrain, title_status, status, req.params.id],
+        (err) => {
+          if (err) reject(err);
+          else resolve();
+        }
+      );
     });
 
-    console.log(`Vehicle ${req.params.id} status changed to ${newStatus}`);
-    res.redirect("/admin?status_updated=true");
+    res.json({ success: true });
   } catch (error) {
-    console.error("Status update error:", error);
-    res.redirect("/admin?error=status_update_failed");
+    console.error("Error updating vehicle:", error);
+    res.status(500).json({ error: "Database error" });
   }
 });
 
