@@ -805,6 +805,19 @@
             const newOrder = [...imagesContainer.querySelectorAll(".image-container")].map((container) => container.dataset.imageNum);
             formData.append("imageOrder", JSON.stringify(newOrder));
 
+            // Debug logs
+            console.log("Sending data to server:");
+            console.log("Vehicle ID:", vehicleId);
+            console.log("Deletions:", Array.from(deletions));
+            console.log("Rotations:", Object.fromEntries(rotations));
+            console.log("New Order:", newOrder);
+            console.log("New Files:", fileInput.files.length);
+
+            // Log FormData contents
+            for (let pair of formData.entries()) {
+              console.log(pair[0], pair[1]);
+            }
+
             const response = await fetch(`/manage-images/${vehicleId}`, {
               method: "POST",
               body: formData,
@@ -812,13 +825,17 @@
             });
 
             if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+              const errorData = await response.json();
+              throw new Error(errorData.details || `HTTP error! status: ${response.status}`);
             }
 
             const result = await response.json();
 
             if (result.success) {
-              window.location.reload();
+              // Add a small delay before reloading to ensure S3 operations are complete
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
             } else {
               throw new Error(result.error || "Unknown error");
             }

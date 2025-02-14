@@ -425,10 +425,18 @@ app.post("/update-vehicle/:id", basicAuth, async (req, res) => {
 // Add image management route
 app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), async (req, res) => {
   try {
+    console.log("Received image management request for vehicle:", req.params.vehicleId);
+    console.log("Request body:", req.body);
+    console.log("Files received:", req.files?.length || 0);
+
     const { vehicleId } = req.params;
     const deletedImages = req.body["deletedImages[]"] || []; // Handle array inputs
     const rotations = {};
     const imageOrder = req.body.imageOrder ? JSON.parse(req.body.imageOrder) : null;
+
+    console.log("Parsed data:");
+    console.log("- Deleted images:", deletedImages);
+    console.log("- Image order:", imageOrder);
 
     // Parse rotation data from form
     Object.keys(req.body).forEach((key) => {
@@ -437,6 +445,7 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
         rotations[imageNum] = parseInt(req.body[key]);
       }
     });
+    console.log("- Rotations:", rotations);
 
     // Get vehicle folder name
     const vehicle = await new Promise((resolve, reject) => {
@@ -447,31 +456,39 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
     });
 
     if (!vehicle) {
+      console.error("Vehicle not found:", vehicleId);
       return res.status(404).json({ error: "Vehicle not found" });
     }
+    console.log("Vehicle folder:", vehicle.images_folder);
 
     // 1. Handle deletions
     if (deletedImages.length > 0) {
+      console.log("Processing deletions...");
       const deletePromises = (Array.isArray(deletedImages) ? deletedImages : [deletedImages]).map(async (imageNum) => {
         try {
+          console.log(`Deleting image ${imageNum} from ${vehicle.images_folder}`);
           await s3
             .deleteObject({
               Bucket: "wholesalecars",
               Key: `${vehicle.images_folder}/${imageNum}.jpg`,
             })
             .promise();
+          console.log(`Successfully deleted image ${imageNum}`);
         } catch (err) {
           console.error(`Failed to delete image ${imageNum}:`, err);
-          throw new Error(`Failed to delete image ${imageNum}`);
+          throw new Error(`Failed to delete image ${imageNum}: ${err.message}`);
         }
       });
       await Promise.all(deletePromises);
+      console.log("All deletions processed");
     }
 
     // 2. Handle rotations
     if (Object.keys(rotations).length > 0) {
+      console.log("Processing rotations...");
       for (const [imageNum, degrees] of Object.entries(rotations)) {
         try {
+          console.log(`Rotating image ${imageNum} by ${degrees} degrees`);
           // Get existing image
           const image = await s3
             .getObject({
@@ -495,17 +512,21 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
               Body: rotatedImage,
               ContentType: "image/jpeg",
               ACL: "public-read",
+              CacheControl: "no-cache",
             })
             .promise();
+          console.log(`Successfully rotated image ${imageNum}`);
         } catch (err) {
           console.error(`Failed to rotate image ${imageNum}:`, err);
-          throw new Error(`Failed to rotate image ${imageNum}`);
+          throw new Error(`Failed to rotate image ${imageNum}: ${err.message}`);
         }
       }
+      console.log("All rotations processed");
     }
 
     // 3. Handle reordering
     if (imageOrder && imageOrder.length > 0) {
+      console.log("Processing image reordering...");
       try {
         // Get all current images
         const currentImages = await s3
@@ -514,21 +535,28 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
             Prefix: `${vehicle.images_folder}/`,
           })
           .promise();
+        console.log(
+          "Current images:",
+          currentImages.Contents.map((obj) => obj.Key)
+        );
 
         // Create a map of temporary names to avoid conflicts
         const tempNames = new Map();
         for (let i = 0; i < imageOrder.length; i++) {
           tempNames.set(imageOrder[i], `temp_${i}`);
         }
+        console.log("Temporary names mapping:", Object.fromEntries(tempNames));
 
         // First rename all to temporary names
         for (const [oldNum, tempNum] of tempNames.entries()) {
+          console.log(`Renaming ${oldNum}.jpg to ${tempNum}.jpg (temp)`);
           await s3
             .copyObject({
               Bucket: "wholesalecars",
-              CopySource: `wholesalecars/${vehicle.images_folder}/${oldNum}.jpg`,
+              CopySource: encodeURIComponent(`wholesalecars/${vehicle.images_folder}/${oldNum}.jpg`),
               Key: `${vehicle.images_folder}/${tempNum}.jpg`,
               ACL: "public-read",
+              CacheControl: "no-cache",
             })
             .promise();
 
@@ -543,12 +571,14 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
         // Then rename to final positions
         for (let i = 0; i < imageOrder.length; i++) {
           const tempNum = tempNames.get(imageOrder[i]);
+          console.log(`Renaming ${tempNum}.jpg to ${i + 1}.jpg (final)`);
           await s3
             .copyObject({
               Bucket: "wholesalecars",
-              CopySource: `wholesalecars/${vehicle.images_folder}/${tempNum}.jpg`,
+              CopySource: encodeURIComponent(`wholesalecars/${vehicle.images_folder}/${tempNum}.jpg`),
               Key: `${vehicle.images_folder}/${i + 1}.jpg`,
               ACL: "public-read",
+              CacheControl: "no-cache",
             })
             .promise();
 
@@ -559,14 +589,16 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
             })
             .promise();
         }
+        console.log("Reordering complete");
       } catch (err) {
         console.error("Failed to reorder images:", err);
-        throw new Error("Failed to reorder images");
+        throw new Error(`Failed to reorder images: ${err.message}`);
       }
     }
 
     // 4. Handle new images
     if (req.files && req.files.length > 0) {
+      console.log("Processing new images...");
       // Get list of existing images
       const existingImages = await s3
         .listObjectsV2({
@@ -581,10 +613,12 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
         const existingNums = existingImages.Contents.map((obj) => parseInt(obj.Key.split("/").pop().split(".")[0])).filter((num) => !isNaN(num));
         nextImageNum = Math.max(...existingNums) + 1;
       }
+      console.log("Next image number:", nextImageNum);
 
       // Upload new images
       for (const file of req.files) {
         try {
+          console.log(`Processing new image ${file.originalname}`);
           const processedImage = await sharp(file.buffer)
             .jpeg({ quality: 80 })
             .resize(1200, null, {
@@ -600,17 +634,21 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
               Body: processedImage,
               ContentType: "image/jpeg",
               ACL: "public-read",
+              CacheControl: "no-cache",
             })
             .promise();
+          console.log(`Successfully uploaded new image as ${nextImageNum}.jpg`);
 
           nextImageNum++;
         } catch (err) {
           console.error(`Failed to process/upload new image:`, err);
-          throw new Error("Failed to upload new image");
+          throw new Error(`Failed to upload new image: ${err.message}`);
         }
       }
+      console.log("All new images processed");
     }
 
+    console.log("All operations completed successfully");
     res.json({
       success: true,
       message: "Images updated successfully",
