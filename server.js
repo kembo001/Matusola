@@ -535,6 +535,11 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
             Prefix: `${vehicle.images_folder}/`,
           })
           .promise();
+
+        if (!currentImages.Contents || currentImages.Contents.length === 0) {
+          throw new Error("No images found to reorder");
+        }
+
         console.log(
           "Current images:",
           currentImages.Contents.map((obj) => obj.Key)
@@ -549,45 +554,55 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
 
         // First rename all to temporary names
         for (const [oldNum, tempNum] of tempNames.entries()) {
-          console.log(`Renaming ${oldNum}.jpg to ${tempNum}.jpg (temp)`);
-          await s3
-            .copyObject({
-              Bucket: "wholesalecars",
-              CopySource: encodeURIComponent(`wholesalecars/${vehicle.images_folder}/${oldNum}.jpg`),
-              Key: `${vehicle.images_folder}/${tempNum}.jpg`,
-              ACL: "public-read",
-              CacheControl: "no-cache",
-            })
-            .promise();
+          try {
+            console.log(`Renaming ${oldNum}.jpg to ${tempNum}.jpg (temp)`);
+            await s3
+              .copyObject({
+                Bucket: "wholesalecars",
+                CopySource: `wholesalecars/${vehicle.images_folder}/${oldNum}.jpg`,
+                Key: `${vehicle.images_folder}/${tempNum}.jpg`,
+                ACL: "public-read",
+                CacheControl: "no-cache",
+              })
+              .promise();
 
-          await s3
-            .deleteObject({
-              Bucket: "wholesalecars",
-              Key: `${vehicle.images_folder}/${oldNum}.jpg`,
-            })
-            .promise();
+            await s3
+              .deleteObject({
+                Bucket: "wholesalecars",
+                Key: `${vehicle.images_folder}/${oldNum}.jpg`,
+              })
+              .promise();
+          } catch (err) {
+            console.error(`Failed to rename image ${oldNum} to temp:`, err);
+            throw new Error(`Failed to rename image ${oldNum} to temp: ${err.message}`);
+          }
         }
 
         // Then rename to final positions
         for (let i = 0; i < imageOrder.length; i++) {
-          const tempNum = tempNames.get(imageOrder[i]);
-          console.log(`Renaming ${tempNum}.jpg to ${i + 1}.jpg (final)`);
-          await s3
-            .copyObject({
-              Bucket: "wholesalecars",
-              CopySource: encodeURIComponent(`wholesalecars/${vehicle.images_folder}/${tempNum}.jpg`),
-              Key: `${vehicle.images_folder}/${i + 1}.jpg`,
-              ACL: "public-read",
-              CacheControl: "no-cache",
-            })
-            .promise();
+          try {
+            const tempNum = tempNames.get(imageOrder[i]);
+            console.log(`Renaming ${tempNum}.jpg to ${i + 1}.jpg (final)`);
+            await s3
+              .copyObject({
+                Bucket: "wholesalecars",
+                CopySource: `wholesalecars/${vehicle.images_folder}/${tempNum}.jpg`,
+                Key: `${vehicle.images_folder}/${i + 1}.jpg`,
+                ACL: "public-read",
+                CacheControl: "no-cache",
+              })
+              .promise();
 
-          await s3
-            .deleteObject({
-              Bucket: "wholesalecars",
-              Key: `${vehicle.images_folder}/${tempNum}.jpg`,
-            })
-            .promise();
+            await s3
+              .deleteObject({
+                Bucket: "wholesalecars",
+                Key: `${vehicle.images_folder}/${tempNum}.jpg`,
+              })
+              .promise();
+          } catch (err) {
+            console.error(`Failed to rename temp image to final position:`, err);
+            throw new Error(`Failed to rename temp image to final position: ${err.message}`);
+          }
         }
         console.log("Reordering complete");
       } catch (err) {

@@ -480,6 +480,20 @@
         this.value = this.value.toUpperCase();
       });
 
+      // Global function for toggling image manager
+      window.toggleImageManager = function (button, vehicleId) {
+        const container = button.closest(".flex-col").querySelector(".image-management");
+        if (container.classList.contains("hidden")) {
+          // Close any other open image managers first
+          document.querySelectorAll(".image-management:not(.hidden)").forEach((el) => {
+            el.classList.add("hidden");
+          });
+          container.classList.remove("hidden");
+        } else {
+          container.classList.add("hidden");
+        }
+      };
+
       // Add this JavaScript to handle preview and ordering
       document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("vehicleForm");
@@ -654,20 +668,6 @@
       document.getElementById("editVin").addEventListener("input", function () {
         this.value = this.value.toUpperCase();
       });
-
-      // Add this function to handle image manager toggle
-      function toggleImageManager(button, vehicleId) {
-        const container = button.closest(".flex-col").querySelector(".image-management");
-        if (container.classList.contains("hidden")) {
-          // Close any other open image managers first
-          document.querySelectorAll(".image-management:not(.hidden)").forEach((el) => {
-            el.classList.add("hidden");
-          });
-          container.classList.remove("hidden");
-        } else {
-          container.classList.add("hidden");
-        }
-      }
 
       document.querySelectorAll(".image-management").forEach((container) => {
         const vehicleId = container.dataset.vehicleId;
