@@ -92,16 +92,47 @@ app.get("/admin", basicAuth, async (req, res) => {
   res.setHeader("Expires", "0");
 
   try {
-    // Get all vehicles from database using Promise
+    // Get all vehicles from database with image counts
     const vehicles = await new Promise((resolve, reject) => {
       db.all(
         `
         SELECT * FROM vehicles 
         ORDER BY created_at DESC
       `,
-        (err, rows) => {
+        async (err, rows) => {
           if (err) reject(err);
-          else resolve(rows);
+          else {
+            // Get image counts for each vehicle
+            const vehiclesWithImages = await Promise.all(
+              rows.map(async (vehicle) => {
+                try {
+                  const images = await s3
+                    .listObjectsV2({
+                      Bucket: "wholesalecars",
+                      Prefix: `${vehicle.images_folder}/`,
+                    })
+                    .promise();
+
+                  return {
+                    ...vehicle,
+                    imageCount: images.Contents.length,
+                    images: images.Contents.map((obj) => ({
+                      number: parseInt(obj.Key.split("/").pop().split(".")[0]),
+                      url: `https://wholesalecars.sfo3.cdn.digitaloceanspaces.com/${obj.Key}`,
+                    })).sort((a, b) => a.number - b.number),
+                  };
+                } catch (error) {
+                  console.error(`Error getting images for vehicle ${vehicle.id}:`, error);
+                  return {
+                    ...vehicle,
+                    imageCount: 0,
+                    images: [],
+                  };
+                }
+              })
+            );
+            resolve(vehiclesWithImages);
+          }
         }
       );
     });
@@ -109,11 +140,15 @@ app.get("/admin", basicAuth, async (req, res) => {
     // Render admin page with vehicles data
     res.render("admin", {
       vehicles: vehicles,
+      success: req.query.success,
+      error: req.query.error,
+      deleted: req.query.deleted,
     });
   } catch (error) {
     console.error("Error fetching vehicles:", error);
     res.render("admin", {
       vehicles: [],
+      error: "Failed to fetch vehicles",
     });
   }
 });
@@ -384,6 +419,138 @@ app.post("/update-vehicle/:id", basicAuth, async (req, res) => {
   } catch (error) {
     console.error("Error updating vehicle:", error);
     res.status(500).json({ error: "Database error" });
+  }
+});
+
+// Add image management route
+app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
+    const deletedImages = req.body["deletedImages[]"] || []; // Handle array inputs
+    const rotations = {};
+
+    // Parse rotation data from form
+    Object.keys(req.body).forEach((key) => {
+      if (key.startsWith("rotations[")) {
+        const imageNum = key.match(/\[(.*?)\]/)[1];
+        rotations[imageNum] = req.body[key];
+      }
+    });
+
+    // Get vehicle folder name
+    const vehicle = await new Promise((resolve, reject) => {
+      db.get("SELECT images_folder FROM vehicles WHERE id = ?", [vehicleId], (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
+    });
+
+    if (!vehicle) {
+      return res.status(404).json({ error: "Vehicle not found" });
+    }
+
+    // 1. Handle deletions
+    if (deletedImages.length > 0) {
+      const deletePromises = (Array.isArray(deletedImages) ? deletedImages : [deletedImages]).map(async (imageNum) => {
+        try {
+          await s3
+            .deleteObject({
+              Bucket: "wholesalecars",
+              Key: `${vehicle.images_folder}/${imageNum}.jpg`,
+            })
+            .promise();
+        } catch (err) {
+          console.error(`Failed to delete image ${imageNum}:`, err);
+        }
+      });
+      await Promise.all(deletePromises);
+    }
+
+    // 2. Handle rotations
+    if (Object.keys(rotations).length > 0) {
+      for (const [imageNum, degrees] of Object.entries(rotations)) {
+        try {
+          // Get existing image
+          const image = await s3
+            .getObject({
+              Bucket: "wholesalecars",
+              Key: `${vehicle.images_folder}/${imageNum}.jpg`,
+            })
+            .promise();
+
+          // Rotate and save
+          const rotatedImage = await sharp(image.Body).rotate(parseInt(degrees)).jpeg({ quality: 80 }).toBuffer();
+
+          await s3
+            .upload({
+              Bucket: "wholesalecars",
+              Key: `${vehicle.images_folder}/${imageNum}.jpg`,
+              Body: rotatedImage,
+              ContentType: "image/jpeg",
+              ACL: "public-read",
+            })
+            .promise();
+        } catch (err) {
+          console.error(`Failed to rotate image ${imageNum}:`, err);
+        }
+      }
+    }
+
+    // 3. Handle new images
+    if (req.files && req.files.length > 0) {
+      // Get list of existing images
+      const existingImages = await s3
+        .listObjectsV2({
+          Bucket: "wholesalecars",
+          Prefix: `${vehicle.images_folder}/`,
+        })
+        .promise();
+
+      // Find next available image number
+      let nextImageNum = 1;
+      if (existingImages.Contents.length > 0) {
+        const existingNums = existingImages.Contents.map((obj) => parseInt(obj.Key.split("/").pop().split(".")[0])).filter((num) => !isNaN(num));
+        nextImageNum = Math.max(...existingNums) + 1;
+      }
+
+      // Upload new images
+      for (const file of req.files) {
+        try {
+          const processedImage = await sharp(file.buffer)
+            .jpeg({ quality: 80 })
+            .resize(1200, null, {
+              withoutEnlargement: true,
+              fit: "inside",
+            })
+            .toBuffer();
+
+          await s3
+            .upload({
+              Bucket: "wholesalecars",
+              Key: `${vehicle.images_folder}/${nextImageNum}.jpg`,
+              Body: processedImage,
+              ContentType: "image/jpeg",
+              ACL: "public-read",
+            })
+            .promise();
+
+          nextImageNum++;
+        } catch (err) {
+          console.error(`Failed to process/upload new image:`, err);
+        }
+      }
+    }
+
+    res.json({
+      success: true,
+      message: "Images updated successfully",
+    });
+  } catch (error) {
+    console.error("Error managing images:", error);
+    res.status(500).json({
+      error: "Image management failed",
+      details: error.message,
+    });
   }
 });
 
