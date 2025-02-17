@@ -189,10 +189,10 @@
             <label for="lien-fee" class="ml-2 block text-sm text-gray-700"> Vehicle has a lien ($2 fee) </label>
           </div>
 
-          <!-- Anoka County Transfer Tax Checkbox -->
+          <!-- Anoka County Transfer Tax Checkbox - Updated to Excise Tax -->
           <div class="flex items-center mt-2">
             <input type="checkbox" id="anoka-transfer" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-            <label for="anoka-transfer" class="ml-2 block text-sm text-gray-700"> Vehicle is being registered in Anoka County ($20 transfer tax) </label>
+            <label for="anoka-transfer" class="ml-2 block text-sm text-gray-700"> Dealer Excise Tax ($20 - required by some counties, charged by dealers) </label>
           </div>
         </form>
 
@@ -220,16 +220,16 @@
               <span class="text-gray-600">Lien Fee:</span>
               <span class="font-medium">$<span id="lien-fee-result">0.00</span></span>
             </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Dealer Excise Tax:</span>
+              <span class="font-medium">$<span id="county-tax">0.00</span></span>
+            </div>
             <div class="pt-3 border-t border-gray-200">
               <h3 class="text-sm font-medium text-gray-700 mb-2">Government Fees</h3>
               <div class="space-y-2">
                 <div class="flex justify-between">
                   <span class="text-gray-600">License Plate Fee:</span>
                   <span class="font-medium">$<span id="plate-fee">0.00</span></span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Anoka County Transfer Tax:</span>
-                  <span class="font-medium">$<span id="county-tax">0.00</span></span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">Technology Surcharge:</span>
@@ -275,7 +275,7 @@
         IN_LIEU_TAX: 10,
         REGISTRATION_FEE_10_PLUS: 30,
         LICENSE_PLATE_FEE: 15.5,
-        ANOKA_COUNTY_TRANSFER_TAX: 20,
+        DEALER_EXCISE_TAX: 20,
         TECHNOLOGY_SURCHARGE: 2.25,
         TITLE_FEE: 8.25,
         TRANSFER_TAX: 10,
@@ -492,7 +492,7 @@
         // Calculate all fixed fees including wheelage
         const fixedFees =
           FEES.LICENSE_PLATE_FEE +
-          (document.getElementById("anoka-transfer").checked ? FEES.ANOKA_COUNTY_TRANSFER_TAX : 0) +
+          (document.getElementById("anoka-transfer").checked ? FEES.DEALER_EXCISE_TAX : 0) +
           FEES.TECHNOLOGY_SURCHARGE +
           FEES.TITLE_FEE +
           FEES.TRANSFER_TAX +
@@ -554,7 +554,7 @@
 
         // Update government fees
         document.getElementById("plate-fee").textContent = FEES.LICENSE_PLATE_FEE.toFixed(2);
-        document.getElementById("county-tax").textContent = (document.getElementById("anoka-transfer").checked ? FEES.ANOKA_COUNTY_TRANSFER_TAX : 0).toFixed(2);
+        document.getElementById("county-tax").textContent = (document.getElementById("anoka-transfer").checked ? FEES.DEALER_EXCISE_TAX : 0).toFixed(2);
         document.getElementById("tech-surcharge").textContent = FEES.TECHNOLOGY_SURCHARGE.toFixed(2);
         document.getElementById("title-fee").textContent = FEES.TITLE_FEE.toFixed(2);
         document.getElementById("transfer-tax").textContent = FEES.TRANSFER_TAX.toFixed(2);
