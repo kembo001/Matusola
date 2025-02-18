@@ -62,27 +62,35 @@
       <!-- Filters Section -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <select 
-            class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            name="status"
-            onchange="updateFilters(this)"
-          >
-            <option value="available" <%= currentStatus === 'available' ? 'selected' : '' %>>Available Vehicles</option>
-            <option value="sold" <%= currentStatus === 'sold' ? 'selected' : '' %>>Sold Vehicles</option>
-            <option value="all" <%= currentStatus === 'all' ? 'selected' : '' %>>All Vehicles</option>
-          </select>
+          <div class="flex flex-col">
+            <label for="status-select" class="sr-only">Filter by Status</label>
+            <select 
+              id="status-select"
+              class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              name="status"
+              onchange="updateFilters(this)"
+            >
+              <option value="available" <%= currentStatus === 'available' ? 'selected' : '' %>>Available Vehicles</option>
+              <option value="sold" <%= currentStatus === 'sold' ? 'selected' : '' %>>Sold Vehicles</option>
+              <option value="all" <%= currentStatus === 'all' ? 'selected' : '' %>>All Vehicles</option>
+            </select>
+          </div>
 
-          <select 
-            class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            name="sort"
-            onchange="updateFilters(this)"
-          >
-            <option value="newest" <%= currentSort === 'newest' ? 'selected' : '' %>>Newest First</option>
-            <option value="price-high" <%= currentSort === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
-            <option value="price-low" <%= currentSort === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
-            <option value="mileage-low" <%= currentSort === 'mileage-low' ? 'selected' : '' %>>Mileage: Low to High</option>
-            <option value="mileage-high" <%= currentSort === 'mileage-high' ? 'selected' : '' %>>Mileage: High to Low</option>
-          </select>
+          <div class="flex flex-col">
+            <label for="sort-select" class="sr-only">Sort Vehicles</label>
+            <select 
+              id="sort-select"
+              class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              name="sort"
+              onchange="updateFilters(this)"
+            >
+              <option value="newest" <%= currentSort === 'newest' ? 'selected' : '' %>>Newest First</option>
+              <option value="price-high" <%= currentSort === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
+              <option value="price-low" <%= currentSort === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
+              <option value="mileage-low" <%= currentSort === 'mileage-low' ? 'selected' : '' %>>Mileage: Low to High</option>
+              <option value="mileage-high" <%= currentSort === 'mileage-high' ? 'selected' : '' %>>Mileage: High to Low</option>
+            </select>
+          </div>
         </div>
       </div>
 
