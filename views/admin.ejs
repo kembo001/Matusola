@@ -446,7 +446,8 @@
     <script>
       // Auto-capitalize VIN
       document.getElementById("vin").addEventListener("input", function (e) {
-        this.value = this.value.toUpperCase();
+        // Convert to uppercase AND trim whitespace
+        this.value = this.value.toUpperCase().trim().replace(/\s+/g, "");
       });
 
       // Global function for toggling image manager
@@ -754,7 +755,8 @@
 
       // Auto-capitalize VIN in edit form
       document.getElementById("editVin").addEventListener("input", function () {
-        this.value = this.value.toUpperCase();
+        // Convert to uppercase AND trim whitespace
+        this.value = this.value.toUpperCase().trim().replace(/\s+/g, "");
       });
 
       // Add save functionality
