@@ -165,7 +165,7 @@ app.get("/calculator", (req, res) => {
 // Inventory Route
 app.get("/inventory", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = 6;
+  const limit = 12;
   const offset = (page - 1) * limit;
 
   // Set default values for filters
