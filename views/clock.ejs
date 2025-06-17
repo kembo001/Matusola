@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clock In</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script>
+      function updateTime() {
+        const now = new Date();
+        const timeElement = document.getElementById("current-time");
+        // Use Minnesota timezone (America/Chicago)
+        timeElement.textContent = now.toLocaleTimeString("en-US", {
+          timeZone: "America/Chicago",
+          hour12: true,
+        });
+      }
+      setInterval(updateTime, 1000); // Update every second
+      window.onload = updateTime;
+    </script>
+  </head>
+  <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-lg mb-6">
+      <h1 class="text-3xl font-bold mb-6 text-center text-blue-600">Clock In/Out</h1>
+      <p class="text-center mb-6 text-gray-700 text-lg">Current Time: <span id="current-time" class="font-semibold text-blue-600"></span></p>
+
+      <% if (message) { %>
+      <div class="mb-4 p-3 rounded-md text-center <%= message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' %>"><%= message.text %></div>
+      <% } %>
+
+      <form action="/clock-action" method="POST" class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-4">Select Your Name:</label>
+          <div class="grid grid-cols-2 gap-3">
+            <% const employees = ['Reid', 'Ava', 'Blake', 'Jake', 'Miranda']; %> <% employees.forEach(employee => { %>
+            <label class="flex items-center justify-center p-3 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition duration-200 relative">
+              <input type="radio" name="employeeName" value="<%= employee %>" required class="sr-only peer" />
+              <span class="text-lg font-medium peer-checked:text-blue-600"><%= employee %></span>
+              <div class="ml-2 w-4 h-4 border-2 border-gray-300 rounded-full peer-checked:border-blue-600 peer-checked:bg-blue-600 flex items-center justify-center">
+                <div class="w-2 h-2 bg-white rounded-full opacity-0 peer-checked:opacity-100"></div>
+              </div>
+            </label>
+            <% }) %>
+          </div>
+        </div>
+        <div>
+          <button type="submit" id="clockButton" disabled class="w-full py-4 px-4 rounded-md font-bold text-lg transition duration-200 bg-gray-300 text-gray-500 cursor-not-allowed">
+            Select your name first
+          </button>
+        </div>
+      </form>
+
+      <% if (currentlyClocked.length > 0) { %>
+      <div class="mt-6 p-4 border-t border-gray-200">
+        <h3 class="font-semibold mb-2 text-blue-600">Currently Clocked In:</h3>
+        <% currentlyClocked.forEach(employee => { %>
+        <div class="text-sm text-gray-600 mb-1">
+          <span class="font-medium"><%= employee.employeeName %></span> - Clocked in at <%= new Date(employee.clockIn).toLocaleTimeString('en-US', { timeZone: 'America/Chicago' }) %>
+        </div>
+        <% }) %>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Section for displaying recent logs -->
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-6xl">
+      <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Recent Time Logs (Last Month)</h2>
+      <% if (logs && logs.length > 0) { %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="py-3 px-4 border-b text-left font-semibold text-gray-700">Employee Name</th>
+              <th class="py-3 px-4 border-b text-left font-semibold text-gray-700">Clock In</th>
+              <th class="py-3 px-4 border-b text-left font-semibold text-gray-700">Clock Out</th>
+              <th class="py-3 px-4 border-b text-left font-semibold text-gray-700">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% logs.forEach((log, index) => { %>
+            <tr class="<%= index % 2 === 0 ? 'bg-white' : 'bg-gray-50' %> hover:bg-blue-50 transition duration-150">
+              <td class="py-3 px-4 border-b font-medium"><%= log.employeeName %></td>
+              <td class="py-3 px-4 border-b"><%= new Date(log.clockIn).toLocaleString('en-US', { timeZone: 'America/Chicago' }) %></td>
+              <td class="py-3 px-4 border-b">
+                <% if (log.clockOut) { %> <%= new Date(log.clockOut).toLocaleString('en-US', { timeZone: 'America/Chicago' }) %> <% } else { %>
+                <span class="text-blue-500 font-medium">Currently Clocked In</span>
+                <% } %>
+              </td>
+              <td class="py-3 px-4 border-b">
+                <% if (log.duration) { %>
+                <span class="font-medium"><%= log.duration %></span>
+                <% } else { %>
+                <span class="text-gray-400">-</span>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% } else { %>
+      <p class="text-center text-gray-600 py-8">No time logs available for the last month.</p>
+      <% } %>
+    </div>
+
+    <!-- Dynamic clock button script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const radioButtons = document.querySelectorAll('input[name="employeeName"]');
+        const clockButton = document.getElementById('clockButton');
+
+        // Get currently clocked employees from server data
+        const currentlyClocked = [
+          <% currentlyClocked.forEach((employee, index) => { %>
+            '<%= employee.employeeName %>'<% if (index < currentlyClocked.length - 1) { %>,<% } %>
+          <% }) %>
+        ];
+
+        function updateButton() {
+          const selectedEmployee = document.querySelector('input[name="employeeName"]:checked');
+          if (selectedEmployee) {
+            const employeeName = selectedEmployee.value;
+            const isCurrentlyClocked = currentlyClocked.includes(employeeName);
+
+            clockButton.disabled = false;
+            if (isCurrentlyClocked) {
+              clockButton.className = 'w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-4 rounded-md focus:outline-none focus:shadow-outline text-lg transition duration-200';
+              clockButton.textContent = 'Clock Out ' + employeeName;
+              clockButton.name = 'action';
+              clockButton.value = 'clock-out';
+            } else {
+              clockButton.className = 'w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-4 rounded-md focus:outline-none focus:shadow-outline text-lg transition duration-200';
+              clockButton.textContent = 'Clock In ' + employeeName;
+              clockButton.name = 'action';
+              clockButton.value = 'clock-in';
+            }
+          } else {
+            clockButton.disabled = true;
+            clockButton.className = 'w-full py-4 px-4 rounded-md font-bold text-lg transition duration-200 bg-gray-300 text-gray-500 cursor-not-allowed';
+            clockButton.textContent = 'Select your name first';
+          }
+        }
+
+        radioButtons.forEach(radio => {
+          radio.addEventListener('change', updateButton);
+        });
+
+        // Initialize button state on page load
+        updateButton();
+
+        // Clean the URL to prevent message on refresh
+        if (window.history.replaceState) {
+          const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+          window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+        }
+      });
+    </script>
+  </body>
+</html>

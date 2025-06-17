@@ -6,6 +6,10 @@ const s3 = require("./spaces.js"); // This imports and runs spaces.js - Our medi
 const multer = require("multer");
 const upload = multer();
 const sharp = require("sharp");
+const { DateTime } = require("luxon"); // For timezone handling
+
+// Import time log handler for the simple clock system
+const { readLogs, writeLogs } = require("./utils/timeLogHandler");
 
 // Helper function to get common S3 upload parameters
 const getS3Params = (Key, Body, ContentType = "image/jpeg") => ({
@@ -156,6 +160,105 @@ app.get("/admin", basicAuth, async (req, res) => {
 });
 
 // END OF AUTH FUNCTION AND ADMIN ROUTE
+
+// CLOCK IN/OUT SYSTEM ROUTES
+
+// GET route for the employee clock interface and log display
+app.get("/clock", basicAuth, async (req, res) => {
+  let logs = await readLogs(); // Read all logs (already filtered by 1 month in handler)
+  const message = req.query.message ? { text: req.query.message, type: req.query.type || "info" } : null;
+  const lastEmployeeName = req.query.employeeName || "";
+
+  // Process logs for display: calculate duration and sort
+  const processedLogs = logs
+    .map((log) => {
+      if (log.clockIn && log.clockOut) {
+        const durationMs = new Date(log.clockOut) - new Date(log.clockIn);
+        const hours = Math.floor(durationMs / (1000 * 60 * 60));
+        let minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+        // If duration is less than a minute, but there was a duration, show 1m
+        if (hours === 0 && minutes === 0 && durationMs > 0) {
+          minutes = 1;
+        }
+
+        log.duration = `${hours}h ${minutes}m`;
+      } else {
+        log.duration = null; // Ensure duration is null if not clocked out
+      }
+      return log;
+    })
+    .sort((a, b) => new Date(b.clockIn) - new Date(a.clockIn)); // Sort newest first
+
+  // Find employees currently clocked in
+  const currentlyClocked = processedLogs.filter((log) => log.status === "clocked_in" && !log.clockOut);
+
+  res.render("clock", {
+    message,
+    lastEmployeeName,
+    logs: processedLogs,
+    currentlyClocked,
+  });
+});
+
+// POST route to handle clock-in/clock-out actions
+app.post("/clock-action", async (req, res) => {
+  const { employeeName, action } = req.body;
+  const currentTime = new Date().toISOString(); // UTC ISO string
+
+  if (!employeeName || !action) {
+    return res.redirect(`/clock?message=Missing+name+or+action&type=error`);
+  }
+
+  let logs = await readLogs();
+  const employeeLowerCaseName = employeeName.toLowerCase().trim();
+
+  // Find the current active log for this employee
+  const activeLogIndex = logs.findIndex(
+    (log) => log.employeeName.toLowerCase().trim() === employeeLowerCaseName && log.status === "clocked_in" && !log.clockOut // Ensure it hasn't been clocked out yet
+  );
+
+  let messageText = "";
+  let messageType = "success";
+
+  if (action === "clock-in") {
+    if (activeLogIndex !== -1) {
+      messageText = `${employeeName} is already clocked in!`;
+      messageType = "error";
+    } else {
+      logs.push({
+        id: Date.now().toString(), // Simple unique ID
+        employeeName: employeeName.trim(),
+        clockIn: currentTime,
+        clockOut: null,
+        status: "clocked_in",
+        ip_address: req.ip, // Capture IP for basic audit
+        device_info: req.headers["user-agent"], // Capture user agent for basic audit
+      });
+      const clockInTimeMN = DateTime.now().setZone("America/Chicago").toLocaleString(DateTime.TIME_SIMPLE);
+      messageText = `${employeeName} successfully clocked in at ${clockInTimeMN}!`;
+    }
+  } else if (action === "clock-out") {
+    if (activeLogIndex !== -1) {
+      logs[activeLogIndex].clockOut = currentTime;
+      logs[activeLogIndex].status = "clocked_out";
+      const clockOutTimeMN = DateTime.now().setZone("America/Chicago").toLocaleString(DateTime.TIME_SIMPLE);
+      messageText = `${employeeName} successfully clocked out at ${clockOutTimeMN}!`;
+    } else {
+      messageText = `${employeeName} is not currently clocked in.`;
+      messageType = "error";
+    }
+  } else {
+    messageText = "Invalid action.";
+    messageType = "error";
+  }
+
+  await writeLogs(logs);
+  // Redirect back to the clock page, passing employee name to show their last log
+  res.redirect(`/clock?employeeName=${encodeURIComponent(employeeName)}&message=${encodeURIComponent(messageText)}&type=${messageType}`);
+});
+
+// END OF CLOCK IN/OUT SYSTEM ROUTES
 
 // Taxes and Fees Route
 app.get("/calculator", (req, res) => {
