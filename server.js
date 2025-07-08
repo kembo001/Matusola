@@ -123,7 +123,7 @@ function basicAuth(req, res, next) {
   const [username, password] = credentials.split(":");
 
   // Check both username and password
-  if (username === "wholesalecars" && password === "Blake777") {
+  if (username === "shoreline" && password === "BigAndBad") {
     next();
   } else {
     res.setHeader("WWW-Authenticate", 'Basic realm="Admin Access"');
