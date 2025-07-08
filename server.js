@@ -417,12 +417,7 @@ app.post("/add-vehicle", upload.array("images"), async (req, res) => {
 app.post("/delete-vehicle/:id", async (req, res) => {
   try {
     // 1. Get vehicle info for DO Spaces folder name
-    const vehicle = await new Promise((resolve, reject) => {
-      db.get("SELECT images_folder FROM vehicles WHERE id = ?", [req.params.id], (err, row) => {
-        if (err) reject(err);
-        else resolve(row);
-      });
-    });
+    const vehicle = (await db.query("SELECT images_folder FROM vehicles WHERE id = ?", [req.params.id])).rows[0];
 
     if (!vehicle) {
       console.log("Vehicle not found in database");
@@ -452,12 +447,7 @@ app.post("/delete-vehicle/:id", async (req, res) => {
     }
 
     // 3. Delete from database
-    await new Promise((resolve, reject) => {
-      db.run("DELETE FROM vehicles WHERE id = ?", [req.params.id], (err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
+    await db.query("DELETE FROM vehicles WHERE id = ?", [req.params.id]);
 
     console.log(`Vehicle ${vehicle.images_folder} deleted successfully`);
     res.redirect("/admin?deleted=true");
@@ -470,12 +460,7 @@ app.post("/delete-vehicle/:id", async (req, res) => {
 // Add get vehicle data route
 app.get("/get-vehicle/:id", basicAuth, async (req, res) => {
   try {
-    const vehicle = await new Promise((resolve, reject) => {
-      db.get("SELECT * FROM vehicles WHERE id = ?", [req.params.id], (err, row) => {
-        if (err) reject(err);
-        else resolve(row);
-      });
-    });
+    const vehicle = (await db.query("SELECT * FROM vehicles WHERE id = ?", [req.params.id])).rows[0];
 
     if (!vehicle) {
       return res.status(404).json({ error: "Vehicle not found" });
@@ -545,12 +530,7 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
     console.log("- Image order:", imageOrder);
 
     // Get vehicle folder name
-    const vehicle = await new Promise((resolve, reject) => {
-      db.get("SELECT images_folder FROM vehicles WHERE id = ?", [vehicleId], (err, row) => {
-        if (err) reject(err);
-        else resolve(row);
-      });
-    });
+    const vehicle = (await db.query("SELECT images_folder FROM vehicles WHERE id = ?", [vehicleId])).rows[0];
 
     if (!vehicle) {
       console.error("Vehicle not found:", vehicleId);
@@ -743,12 +723,7 @@ app.post("/manage-images/:vehicleId", basicAuth, upload.array("newImages"), asyn
 // Add get vehicle images route
 app.get("/get-vehicle-images/:vehicleId", basicAuth, async (req, res) => {
   try {
-    const vehicle = await new Promise((resolve, reject) => {
-      db.get("SELECT images_folder FROM vehicles WHERE id = ?", [req.params.vehicleId], (err, row) => {
-        if (err) reject(err);
-        else resolve(row);
-      });
-    });
+    const vehicle = (await db.query("SELECT images_folder FROM vehicles WHERE id = ?", [req.params.vehicleId])).rows[0];
 
     if (!vehicle) {
       return res.status(404).json({ error: "Vehicle not found" });
@@ -763,6 +738,7 @@ app.get("/get-vehicle-images/:vehicleId", basicAuth, async (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
