@@ -7,6 +7,7 @@ const multer = require("multer");
 const upload = multer();
 const sharp = require("sharp");
 const { DateTime } = require("luxon"); // For timezone handling
+require("dotenv").config();
 
 // Import time log handler for the simple clock system
 const { readLogs, writeLogs } = require("./utils/timeLogHandler");
