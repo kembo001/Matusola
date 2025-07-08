@@ -1,40 +1,26 @@
+// database.js
+const { Pool } = require('pg');
 
-const path = require("path");
-
-const Database = require('better-sqlite3');
-
-// Create/connect to database
-const db = new Database.Database(path.join(__dirname, "database.db"), (err) => {
-  if (err) {
-    console.error("Error connecting to database:", err);
-  } else {
-    console.log("Connected to SQLite database");
-    createTables();
+// Create a new connection pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // Required for Render's managed Postgres
   }
 });
 
-// Create table if they don't exist
-function createTables() {
-  db.run(`
-        CREATE TABLE IF NOT EXISTS vehicles (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            year INTEGER NOT NULL,
-            make TEXT NOT NULL,
-            model TEXT NOT NULL,
-            trim TEXT,
-            price INTEGER,
-            mileage INTEGER,
-            vin TEXT,
-            engine TEXT,
-            transmission TEXT,
-            drivetrain TEXT DEFAULT 'Not Specified',
-            title_status TEXT DEFAULT 'Clean',
-            status TEXT DEFAULT 'available',
-            images_folder TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    `);
-}
+// Optional: Test connection once at startup
+pool.connect()
+  .then(client => {
+    console.log('✅ Connected to PostgreSQL');
+    client.release();
+  })
+  .catch(err => {
+    console.error('❌ PostgreSQL connection error:', err.stack);
+  });
 
-module.exports = db;
+// Export a simple query helper
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+  pool // Export raw pool if needed elsewhere
+};
