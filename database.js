@@ -4,9 +4,9 @@ require("dotenv").config();
 
 // Create a new connection pool
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: 'postgres://shoreline_cars_db_user:hVDUxeDR25cHo4NXab4G9NFJy5yukNrF@dpg-d1m92m63jp1c73eftq50-a/shoreline_cars_db',
   ssl: {
-    rejectUnauthorized: false // Required for Render's managed Postgres
+    rejectUnauthorized: false
   }
 });
 
