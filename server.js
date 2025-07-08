@@ -295,6 +295,51 @@ app.get("/inventory", async (req, res) => {
   }
 });
 
+// TEMPORARY SEED ROUTE - RUN ONCE
+app.get("/seed", async (req, res) => {
+  try {
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS vehicles (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        year INTEGER NOT NULL,
+        make TEXT NOT NULL,
+        model TEXT NOT NULL,
+        trim TEXT,
+        price NUMERIC,
+        mileage INTEGER,
+        vin TEXT,
+        engine TEXT,
+        transmission TEXT,
+        drivetrain TEXT,
+        title_status TEXT,
+        status TEXT DEFAULT 'available',
+        images_folder TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await db.query(`
+      INSERT INTO vehicles (
+        title, year, make, model, trim,
+        price, mileage, vin, engine, transmission,
+        drivetrain, title_status, status, images_folder
+      ) VALUES (
+        '2021 Honda Civic EX', 2021, 'Honda', 'Civic', 'EX',
+        18995, 24300, '19XFC2F7XME200001', '2.0L I4', 'Automatic',
+        'FWD', 'Clean', 'available', 'vehicle_1234567890'
+      );
+    `);
+
+    res.send("✅ Database seeded successfully.");
+  } catch (error) {
+    console.error("❌ Seeding error:", error);
+    res.status(500).send("Failed to seed database.");
+  }
+});
+
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
