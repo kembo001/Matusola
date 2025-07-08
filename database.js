@@ -1,5 +1,6 @@
 // database.js
 const { Pool } = require('pg');
+require("dotenv").config();
 
 // Create a new connection pool
 const pool = new Pool({
